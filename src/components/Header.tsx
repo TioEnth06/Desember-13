@@ -1,11 +1,15 @@
 import { Bell, Plus, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const Header = () => {
+interface HeaderProps {
+  title?: string;
+}
+
+export const Header = ({ title = "Overview" }: HeaderProps) => {
   return (
     <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6">
       <div className="flex items-center gap-3">
-        <h1 className="text-lg font-semibold text-foreground">Overview</h1>
+        <h1 className="text-lg font-semibold text-foreground">{title}</h1>
         <span className="badge-live">
           <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse-slow" />
           LIVE

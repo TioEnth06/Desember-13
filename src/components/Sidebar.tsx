@@ -1,34 +1,56 @@
 import { Search, LayoutDashboard, Wallet, Vote, ShoppingCart, Coins, Briefcase, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface NavItemProps {
   icon: React.ReactNode;
   label: string;
   active?: boolean;
   hasSubmenu?: boolean;
+  href?: string;
 }
 
-const NavItem = ({ icon, label, active, hasSubmenu }: NavItemProps) => (
-  <button className={cn("nav-item w-full justify-between", active && "nav-item-active")}>
-    <div className="flex items-center gap-3">
-      {icon}
-      <span>{label}</span>
-    </div>
-    {hasSubmenu && <ChevronDown className="w-4 h-4" />}
-  </button>
-);
+const NavItem = ({ icon, label, active, hasSubmenu, href = "#" }: NavItemProps) => {
+  const content = (
+    <>
+      <div className="flex items-center gap-3">
+        {icon}
+        <span>{label}</span>
+      </div>
+      {hasSubmenu && <ChevronDown className="w-4 h-4" />}
+    </>
+  );
 
-export const Sidebar = () => {
+  if (href && href !== "#") {
+    return (
+      <Link to={href} className={cn("nav-item w-full justify-between", active && "nav-item-active")}>
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <button className={cn("nav-item w-full justify-between", active && "nav-item-active")}>
+      {content}
+    </button>
+  );
+};
+
+interface SidebarProps {
+  activePage?: "overview" | "vault" | "governance" | "marketplace" | "staking" | "portfolio";
+}
+
+export const Sidebar = ({ activePage = "overview" }: SidebarProps) => {
   return (
     <aside className="w-64 min-h-screen bg-card border-r border-border flex flex-col">
       {/* Logo */}
       <div className="p-5 border-b border-border">
-        <div className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <span className="text-primary-foreground font-bold text-sm">∞</span>
           </div>
           <span className="font-semibold text-lg text-foreground">NANOFi</span>
-        </div>
+        </Link>
       </div>
 
       {/* Search */}
@@ -46,12 +68,22 @@ export const Sidebar = () => {
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-2 space-y-1">
-        <NavItem icon={<LayoutDashboard className="w-5 h-5" />} label="Overview" active />
-        <NavItem icon={<Wallet className="w-5 h-5" />} label="Vault" />
-        <NavItem icon={<Vote className="w-5 h-5" />} label="Governance" />
-        <NavItem icon={<ShoppingCart className="w-5 h-5" />} label="Marketplace" hasSubmenu />
-        <NavItem icon={<Coins className="w-5 h-5" />} label="Staking" hasSubmenu />
-        <NavItem icon={<Briefcase className="w-5 h-5" />} label="Portfolio" hasSubmenu />
+        <NavItem 
+          icon={<LayoutDashboard className="w-5 h-5" />} 
+          label="Overview" 
+          active={activePage === "overview"}
+          href="/"
+        />
+        <NavItem 
+          icon={<Wallet className="w-5 h-5" />} 
+          label="Vault" 
+          active={activePage === "vault"}
+          href="/vault"
+        />
+        <NavItem icon={<Vote className="w-5 h-5" />} label="Governance" active={activePage === "governance"} />
+        <NavItem icon={<ShoppingCart className="w-5 h-5" />} label="Marketplace" hasSubmenu active={activePage === "marketplace"} />
+        <NavItem icon={<Coins className="w-5 h-5" />} label="Staking" hasSubmenu active={activePage === "staking"} />
+        <NavItem icon={<Briefcase className="w-5 h-5" />} label="Portfolio" hasSubmenu active={activePage === "portfolio"} />
       </nav>
 
       {/* User */}
