@@ -15,8 +15,8 @@ const CircularProgress = ({ value }: { value: number }) => {
   const strokeDashoffset = circumference - (value / 100) * circumference;
 
   return (
-    <div className="relative w-10 h-10">
-      <svg className="w-10 h-10 -rotate-90" viewBox="0 0 36 36">
+    <div className="relative w-8 h-8">
+      <svg className="w-8 h-8 -rotate-90" viewBox="0 0 36 36">
         <circle
           cx="18"
           cy="18"
@@ -79,10 +79,10 @@ export const VotingWindow = () => {
                 <p className="text-xs text-muted-foreground">{proposal.type}</p>
                 <p className="text-sm font-medium text-foreground">{proposal.name}</p>
               </div>
-              <span className="text-xs text-muted-foreground">{proposal.prop}</span>
+              <span className="text-xs text-muted-foreground rounded-full px-2 py-1" style={{ border: '1px solid rgba(0, 0, 0, 0.1)' }}>{proposal.prop}</span>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 mb-3 text-center">
+            <div className="grid grid-cols-3 gap-2 mb-6 text-center">
               <div>
                 <p className="text-xs text-muted-foreground">For</p>
                 <p className="text-sm font-semibold text-foreground">{proposal.forVotes.toLocaleString()}</p>
@@ -107,7 +107,7 @@ export const VotingWindow = () => {
               </div>
               <Button 
                 variant="ghost" 
-                className="text-foreground gap-1 text-sm h-8"
+                className="text-foreground gap-1 text-sm h-10"
                 style={{ border: '1px solid rgba(0, 0, 0, 0.1)' }}
               >
                 Vote Now
