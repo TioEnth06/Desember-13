@@ -13,10 +13,12 @@ export const Footer = () => {
         <div className="flex justify-between">
           <div className="max-w-sm">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-primary-foreground flex items-center justify-center">
-                <span className="text-primary font-bold text-sm">∞</span>
-              </div>
-              <span className="font-semibold text-lg">NanoFi</span>
+              <img 
+                src="/nanofi-logo.png" 
+                alt="NanoFi Logo" 
+                className="h-8 w-auto object-contain"
+                style={{ maxHeight: '32px', maxWidth: '120px' }}
+              />
             </div>
             <p className="text-primary-foreground/70 text-sm mb-6 leading-relaxed">
               Transforming intellectual property into liquid, tradeable asset through decentralized finance

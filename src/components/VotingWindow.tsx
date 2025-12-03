@@ -105,7 +105,11 @@ export const VotingWindow = () => {
                   <p className="text-sm font-semibold text-accent">{proposal.funded}%</p>
                 </div>
               </div>
-              <Button variant="ghost" className="text-foreground gap-1 text-sm h-8">
+              <Button 
+                variant="ghost" 
+                className="text-foreground gap-1 text-sm h-8"
+                style={{ border: '1px solid rgba(0, 0, 0, 0.1)' }}
+              >
                 Vote Now
                 <ArrowRight className="w-4 h-4" />
               </Button>

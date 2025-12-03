@@ -87,30 +87,30 @@ export const PatentTable = () => {
           </thead>
           <tbody>
             {patents.map((patent, index) => (
-              <tr
-                key={index}
-                className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors animate-fade-in"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <td className="py-4 px-4 text-sm text-muted-foreground">{patent.no}.</td>
-                <td className="py-4 px-4 text-sm font-medium text-foreground">{patent.id}</td>
-                <td className="py-4 px-4 text-sm text-foreground">{patent.title}</td>
-                <td className="py-4 px-4 text-sm text-muted-foreground">{patent.field}</td>
+            <tr
+              key={index}
+              className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors animate-fade-in"
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
+              <td className="py-4 px-4 text-sm text-muted-foreground">{patent.no}.</td>
+              <td className="py-4 px-4 text-sm font-medium text-foreground">{patent.id}</td>
+              <td className="py-4 px-4 text-sm text-foreground">{patent.title}</td>
+              <td className="py-4 px-4 text-sm text-muted-foreground">{patent.field}</td>
                 <td className="py-4 px-4">
                   <StatusBadge status={patent.status} />
                 </td>
-                <td className="py-4 px-4">
-                  <div className="flex items-center gap-1 text-sm text-foreground">
-                    <TrendingUp className="w-4 h-4 text-success" />
-                    {patent.valuation}
-                  </div>
-                </td>
-                <td className="py-4 px-4">
-                  <button className="text-sm text-accent hover:text-accent/80 font-medium">
-                    {patent.mintDate}
-                  </button>
-                </td>
-                <td className="py-4 px-4 text-sm text-muted-foreground">{patent.time}</td>
+              <td className="py-4 px-4">
+                <div className="flex items-center gap-1 text-sm text-foreground">
+                  <TrendingUp className="w-4 h-4 text-success" />
+                  {patent.valuation}
+                </div>
+              </td>
+              <td className="py-4 px-4">
+                <button className="text-sm text-accent hover:text-accent/80 font-medium">
+                  {patent.mintDate}
+                </button>
+              </td>
+              <td className="py-4 px-4 text-sm text-muted-foreground">{patent.time}</td>
               </tr>
             ))}
           </tbody>
