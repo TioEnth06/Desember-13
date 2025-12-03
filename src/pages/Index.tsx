@@ -10,9 +10,9 @@ import { Footer } from "@/components/Footer";
 const Index = () => {
   return (
     <div className="flex min-h-screen bg-background">
-      <Sidebar />
+      <Sidebar activePage="overview" />
       <div className="flex-1 flex flex-col">
-        <Header />
+        <Header title="Overview" />
         <main className="flex-1 p-6 overflow-auto">
           <div className="max-w-[1400px] mx-auto space-y-6">
             <HeroSection />
