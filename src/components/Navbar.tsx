@@ -52,8 +52,8 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
   const navItems = [
     { icon: <LayoutDashboard className="w-4 h-4" />, label: "Overview", active: activePage === "overview", href: "/" },
     { icon: <Wallet className="w-4 h-4" />, label: "Vault", active: activePage === "vault", href: "/vault" },
-    { icon: <HandCoins className="w-4 h-4" />, label: "Lending", active: activePage === "lending" },
-    { icon: <Vote className="w-4 h-4" />, label: "Governance", active: activePage === "governance" },
+    { icon: <HandCoins className="w-4 h-4" />, label: "Lending", active: activePage === "lending", href: "/lending" },
+    { icon: <Vote className="w-4 h-4" />, label: "Governance", active: activePage === "governance", href: "/governance" },
     { icon: <ShoppingCart className="w-4 h-4" />, label: "Marketplace", hasSubmenu: true, active: activePage === "marketplace" },
     { icon: <Coins className="w-4 h-4" />, label: "Staking", hasSubmenu: true, active: activePage === "staking" },
   ];
