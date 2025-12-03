@@ -5,6 +5,15 @@ import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -14,7 +23,11 @@ interface NavItemProps {
   href?: string;
 }
 
-const NavItem = ({ icon, label, active, hasSubmenu, href = "#" }: NavItemProps) => {
+interface NavItemWithDialogProps extends NavItemProps {
+  onComingSoon?: () => void;
+}
+
+const NavItem = ({ icon, label, active, hasSubmenu, href = "#", onComingSoon }: NavItemWithDialogProps) => {
   const baseClasses = "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors";
   const activeClasses = active ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground";
 
@@ -26,7 +39,14 @@ const NavItem = ({ icon, label, active, hasSubmenu, href = "#" }: NavItemProps) 
     </>
   );
 
-  if (href && href !== "#") {
+  const handleClick = (e: React.MouseEvent) => {
+    if (onComingSoon) {
+      e.preventDefault();
+      onComingSoon();
+    }
+  };
+
+  if (href && href !== "#" && !onComingSoon) {
     return (
       <Link to={href} className={cn(baseClasses, activeClasses)}>
         {content}
@@ -35,7 +55,7 @@ const NavItem = ({ icon, label, active, hasSubmenu, href = "#" }: NavItemProps) 
   }
 
   return (
-    <button className={cn(baseClasses, activeClasses)}>
+    <button className={cn(baseClasses, activeClasses)} onClick={handleClick}>
       {content}
     </button>
   );
@@ -48,14 +68,15 @@ interface NavbarProps {
 export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [comingSoonOpen, setComingSoonOpen] = useState(false);
 
   const navItems = [
     { icon: <LayoutDashboard className="w-4 h-4" />, label: "Overview", active: activePage === "overview", href: "/" },
     { icon: <Wallet className="w-4 h-4" />, label: "Vault", active: activePage === "vault", href: "/vault" },
     { icon: <HandCoins className="w-4 h-4" />, label: "Lending", active: activePage === "lending", href: "/lending" },
     { icon: <Vote className="w-4 h-4" />, label: "Governance", active: activePage === "governance", href: "/governance" },
-    { icon: <ShoppingCart className="w-4 h-4" />, label: "Marketplace", hasSubmenu: true, active: activePage === "marketplace" },
-    { icon: <Coins className="w-4 h-4" />, label: "Staking", hasSubmenu: true, active: activePage === "staking" },
+    { icon: <ShoppingCart className="w-4 h-4" />, label: "Marketplace", hasSubmenu: true, active: activePage === "marketplace", onComingSoon: true },
+    { icon: <Coins className="w-4 h-4" />, label: "Staking", hasSubmenu: true, active: activePage === "staking", onComingSoon: true },
   ];
 
   return (
@@ -84,6 +105,7 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
                   active={item.active}
                   hasSubmenu={item.hasSubmenu}
                   href={item.href}
+                  onComingSoon={item.onComingSoon ? () => setComingSoonOpen(true) : undefined}
                 />
               ))}
             </nav>
@@ -177,23 +199,46 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
                   
                   {/* Mobile Navigation */}
                   <nav className="flex flex-col gap-1">
-                    {navItems.map((item, index) => (
-                      <Link
-                        key={index}
-                        to={item.href || "#"}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={cn(
-                          "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors",
-                          item.active
-                            ? "bg-muted text-foreground"
-                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                        )}
-                      >
-                        {item.icon}
-                        <span>{item.label}</span>
-                        {item.hasSubmenu && <ChevronDown className="w-4 h-4 ml-auto" />}
-                      </Link>
-                    ))}
+                    {navItems.map((item, index) => {
+                      if (item.onComingSoon) {
+                        return (
+                          <button
+                            key={index}
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              setComingSoonOpen(true);
+                            }}
+                            className={cn(
+                              "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors w-full text-left",
+                              item.active
+                                ? "bg-muted text-foreground"
+                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                            )}
+                          >
+                            {item.icon}
+                            <span>{item.label}</span>
+                            {item.hasSubmenu && <ChevronDown className="w-4 h-4 ml-auto" />}
+                          </button>
+                        );
+                      }
+                      return (
+                        <Link
+                          key={index}
+                          to={item.href || "#"}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={cn(
+                            "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors",
+                            item.active
+                              ? "bg-muted text-foreground"
+                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          )}
+                        >
+                          {item.icon}
+                          <span>{item.label}</span>
+                          {item.hasSubmenu && <ChevronDown className="w-4 h-4 ml-auto" />}
+                        </Link>
+                      );
+                    })}
                   </nav>
 
                   {/* Mobile Actions */}
@@ -224,6 +269,23 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
           )}
         </div>
       </div>
+
+      {/* Coming Soon Dialog */}
+      <AlertDialog open={comingSoonOpen} onOpenChange={setComingSoonOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Coming Soon Update</AlertDialogTitle>
+            <AlertDialogDescription>
+              This feature is currently under development. We're working hard to bring you an amazing experience. Please check back soon!
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setComingSoonOpen(false)}>
+              Got it
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </header>
   );
 };

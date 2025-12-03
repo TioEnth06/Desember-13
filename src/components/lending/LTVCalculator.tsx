@@ -1,10 +1,65 @@
-import { Calculator, Info } from "lucide-react";
+import { Calculator, Info, TrendingUp, Shield, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 export function LTVCalculator() {
   const [patentValue, setPatentValue] = useState("");
-  
+  const [interestRate, setInterestRate] = useState<string>("");
+  const [riskScore, setRiskScore] = useState<number | null>(null);
+  const [ltvRatio, setLtvRatio] = useState<number | null>(null);
+  const [maxLoanAmount, setMaxLoanAmount] = useState<string>("");
+
+  useEffect(() => {
+    if (patentValue) {
+      const value = parseFloat(patentValue.replace(/[^0-9.]/g, ""));
+      if (!isNaN(value) && value > 0) {
+        // Calculate risk score (simulated - would come from oracle)
+        const calculatedRiskScore = Math.min(100, Math.max(0, 85 - (value / 100000) * 0.1));
+        setRiskScore(Math.round(calculatedRiskScore));
+
+        // Calculate LTV ratio based on risk score
+        let calculatedLTV = 0;
+        if (calculatedRiskScore >= 80) {
+          calculatedLTV = 70; // Low risk
+          setInterestRate("6.5%");
+        } else if (calculatedRiskScore >= 60) {
+          calculatedLTV = 60; // Medium risk
+          setInterestRate("8.5%");
+        } else {
+          calculatedLTV = 50; // High risk
+          setInterestRate("12.0%");
+        }
+        setLtvRatio(calculatedLTV);
+        setMaxLoanAmount((value * (calculatedLTV / 100)).toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }));
+      } else {
+        setRiskScore(null);
+        setLtvRatio(null);
+        setInterestRate("");
+        setMaxLoanAmount("");
+      }
+    } else {
+      setRiskScore(null);
+      setLtvRatio(null);
+      setInterestRate("");
+      setMaxLoanAmount("");
+    }
+  }, [patentValue]);
+
+  const getRiskColor = (score: number | null) => {
+    if (!score) return "text-muted-foreground";
+    if (score >= 80) return "text-success";
+    if (score >= 60) return "text-warning";
+    return "text-destructive";
+  };
+
+  const getRiskLabel = (score: number | null) => {
+    if (!score) return "";
+    if (score >= 80) return "Low Risk";
+    if (score >= 60) return "Medium Risk";
+    return "High Risk";
+  };
+
   return (
     <div className="rounded-xl border border-border bg-card p-6 shadow-sm animate-fade-in">
       <div className="mb-4 flex items-center gap-2">
@@ -41,15 +96,77 @@ export function LTVCalculator() {
           </p>
         </div>
 
-        <div className="rounded-lg border border-dashed border-border bg-muted/30 p-4 text-center">
-          <p className="text-sm font-medium text-foreground">Ready to Calculate</p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Enter your patent valuation data above to see your collateral conversion and LTV ratio
-          </p>
-        </div>
+        {/* Interest Rate Preview */}
+        {interestRate && (
+          <div className="rounded-lg border border-border bg-muted/30 p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                <span className="text-sm font-medium text-foreground">Interest Rate Preview</span>
+              </div>
+              <span className="text-lg font-bold text-primary">{interestRate}</span>
+            </div>
+            <p className="text-xs text-muted-foreground">Fixed APR based on your collateral</p>
+          </div>
+        )}
 
-        <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-          Calculate Now
+        {/* Risk Score from Valuation Oracle */}
+        {riskScore !== null && (
+          <div className="rounded-lg border border-border bg-muted/30 p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Shield className="h-4 w-4 text-primary" />
+                <span className="text-sm font-medium text-foreground">Risk Score</span>
+              </div>
+              <div className="text-right">
+                <span className={cn("text-lg font-bold", getRiskColor(riskScore))}>
+                  {riskScore}
+                </span>
+                <span className="text-xs text-muted-foreground ml-1">/100</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">From Valuation Oracle</span>
+              <span className={cn("text-xs font-medium", getRiskColor(riskScore))}>
+                {getRiskLabel(riskScore)}
+              </span>
+            </div>
+            {ltvRatio !== null && (
+              <div className="mt-3 pt-3 border-t border-border">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-muted-foreground">Max Loan Amount (LTV {ltvRatio}%)</span>
+                  <span className="text-sm font-semibold text-foreground">{maxLoanAmount}</span>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2 mt-2">
+                  <div
+                    className={cn(
+                      "h-2 rounded-full transition-all duration-500",
+                      getRiskColor(riskScore) === "text-success" ? "bg-success" :
+                      getRiskColor(riskScore) === "text-warning" ? "bg-warning" : "bg-destructive"
+                    )}
+                    style={{ width: `${ltvRatio}%` }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {!patentValue && (
+          <div className="rounded-lg border border-dashed border-border bg-muted/30 p-4 text-center">
+            <p className="text-sm font-medium text-foreground">Ready to Calculate</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Enter your patent valuation data above to see your collateral conversion and LTV ratio
+            </p>
+          </div>
+        )}
+
+        <Button 
+          className="w-full bg-primary text-primary-foreground hover:bg-primary/90 gap-2"
+          disabled={!patentValue || !interestRate}
+        >
+          <Send className="h-4 w-4" />
+          Submit Loan Request
         </Button>
       </div>
     </div>
