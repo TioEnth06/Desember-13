@@ -1,5 +1,4 @@
-import { Sidebar } from "@/components/Sidebar";
-import { Header } from "@/components/Header";
+import { Navbar } from "@/components/Navbar";
 import { VaultHero } from "@/components/vault/VaultHero";
 import { VaultStats } from "@/components/vault/VaultStats";
 import { PatentTable } from "@/components/vault/PatentTable";
@@ -9,21 +8,18 @@ import { Footer } from "@/components/Footer";
 
 const Vault = () => {
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar activePage="vault" />
-      <div className="flex-1 flex flex-col">
-        <Header title="Vault" />
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-[1400px] mx-auto space-y-6">
-            <VaultHero />
-            <VaultStats />
-            <PatentTable />
-            <TokenizeSteps />
-            <BenefitsSection />
-          </div>
-        </main>
-        <Footer />
-      </div>
+    <div className="min-h-screen bg-background">
+      <Navbar activePage="vault" />
+      <main className="p-6">
+        <div className="max-w-[1400px] mx-auto space-y-6">
+          <VaultHero />
+          <VaultStats />
+          <PatentTable />
+          <TokenizeSteps />
+          <BenefitsSection />
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 };
