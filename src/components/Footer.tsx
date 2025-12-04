@@ -9,14 +9,15 @@ const footerLinks = {
 export const Footer = () => {
   return (
     <footer className="bg-primary text-primary-foreground mt-8">
-      <div className="px-8 py-12">
-        <div className="flex justify-between">
-          <div className="max-w-sm">
+      <div className="px-4 sm:px-6 md:px-8 py-8 md:py-12">
+        <div className="flex flex-col lg:flex-row justify-between gap-8 md:gap-12 lg:gap-8">
+          {/* Logo and Description Section */}
+          <div className="max-w-sm w-full lg:w-auto">
             <div className="flex items-center gap-2 mb-4">
               <img 
                 src="/nanofi-logo.png" 
                 alt="NanoFi Logo" 
-                className="h-8 w-auto object-contain"
+                className="h-7 sm:h-8 w-auto object-contain"
                 style={{ maxHeight: '32px', maxWidth: '120px' }}
               />
             </div>
@@ -41,16 +42,17 @@ export const Footer = () => {
             </div>
           </div>
 
-          <div className="flex gap-20">
+          {/* Footer Links Section */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 lg:gap-16 xl:gap-20 w-full lg:w-auto">
             {Object.entries(footerLinks).map(([category, links]) => (
               <div key={category}>
-                <h4 className="font-semibold mb-4">{category}</h4>
+                <h4 className="font-semibold mb-3 md:mb-4 text-sm md:text-base">{category}</h4>
                 <ul className="space-y-2">
                   {links.map((link) => (
                     <li key={link}>
                       <a
                         href="#"
-                        className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
+                        className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors block py-1"
                       >
                         {link}
                       </a>
@@ -63,14 +65,15 @@ export const Footer = () => {
         </div>
       </div>
 
-      <div className="border-t border-primary-foreground/10 px-8 py-4">
-        <div className="flex items-center justify-between text-sm text-primary-foreground/60">
-          <p>© 2025 NanoFi. All Right Reserved.</p>
-          <div className="flex gap-4">
+      {/* Bottom Section */}
+      <div className="border-t border-primary-foreground/10 px-4 sm:px-6 md:px-8 py-4 md:py-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-primary-foreground/60">
+          <p className="text-center sm:text-left">© 2025 NanoFi. All Right Reserved.</p>
+          <div className="flex gap-4 items-center">
             <a href="#" className="hover:text-primary-foreground transition-colors">
               Terms & Conditions
             </a>
-            <span>•</span>
+            <span className="hidden sm:inline">•</span>
             <a href="#" className="hover:text-primary-foreground transition-colors">
               Privacy Policy
             </a>

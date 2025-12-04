@@ -13,6 +13,9 @@ export default {
       },
     },
     extend: {
+      screens: {
+        'nav': '1340px', // Custom breakpoint for navigation
+      },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
