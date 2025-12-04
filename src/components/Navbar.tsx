@@ -177,8 +177,8 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
             </div>
           )}
 
-          {/* Hamburger Menu Toggle - Hidden on all screens */}
-          <div className="hidden">
+          {/* Hamburger Menu Toggle - Show below 1340px */}
+          <div className="flex nav:hidden">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
                 <button className="p-1.5 sm:p-2 rounded-lg hover:bg-muted transition-colors">

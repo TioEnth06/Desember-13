@@ -61,7 +61,7 @@ export function LTVCalculator() {
   };
 
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-sm animate-fade-in">
+    <div className="rounded-xl border border-border bg-card p-6 shadow-sm animate-fade-in h-auto lg:sticky lg:top-20 lg:z-10">
       <div className="mb-4 flex items-center gap-2">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
           <Calculator className="h-4 w-4 text-primary" />
@@ -84,7 +84,7 @@ export function LTVCalculator() {
               value={patentValue}
               onChange={(e) => setPatentValue(e.target.value)}
               placeholder="0.00"
-              className="w-full rounded-lg border border-border bg-background py-2.5 pl-7 pr-4 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-lg border border-border bg-background py-2.5 pl-7 pr-4 text-foreground placeholder:text-muted-foreground focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
         </div>

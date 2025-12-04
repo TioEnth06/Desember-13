@@ -48,7 +48,7 @@ export function PositionCard({
       )}
       style={{ animationDelay: `${animationDelay}ms` }}
     >
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-0">
         {/* Left: Token Info */}
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
@@ -67,19 +67,19 @@ export function PositionCard({
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-8 text-right">
-          <div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 text-left md:text-right w-full md:w-auto">
+          <div className="pb-4 md:pb-0 border-b md:border-b-0 border-border">
             <p className="text-xs text-muted-foreground">Collateral</p>
             <p className="mt-1 font-semibold text-foreground">{collateral}</p>
             <p className="text-xs text-muted-foreground">Loan APY: <span className="text-primary">{collateralApy}</span></p>
           </div>
-          <div>
+          <div className="pb-4 md:pb-0 border-b md:border-b-0 border-border">
             <p className="text-xs text-muted-foreground">Borrowed</p>
             <p className="mt-1 font-semibold text-foreground">{borrowed}</p>
             <p className="text-xs text-muted-foreground">Borrow APY: <span className="text-primary">{borrowApy}</span></p>
           </div>
-          <div className="min-w-[120px]">
-            <div className="flex items-center justify-end gap-2">
+          <div className="min-w-0 md:min-w-[120px]">
+            <div className="flex items-center justify-start md:justify-end gap-2">
               <p className="text-xs text-muted-foreground">LTV Ratio</p>
               <span className={cn("text-sm font-bold", getLtvColor(ltvRatio))}>{ltvRatio}%</span>
             </div>

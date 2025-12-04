@@ -60,8 +60,8 @@ const colorStyles = {
 
 export function RiskTiersCard() {
   return (
-    <div className="rounded-xl bg-gradient-to-br from-primary via-primary/90 to-accent p-6 text-primary-foreground shadow-md animate-fade-in" style={{ animationDelay: '300ms' }}>
-      <div className="mb-4 flex items-center gap-2">
+    <div className="rounded-xl bg-gradient-to-br from-primary via-primary/90 to-accent p-6 text-primary-foreground shadow-md animate-fade-in h-[300px]" style={{ animationDelay: '300ms' }}>
+      <div className="mb-6 flex flex-col items-center gap-3 text-center">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-foreground/20">
           <Info className="h-4 w-4 text-primary-foreground" />
         </div>
@@ -73,7 +73,7 @@ export function RiskTiersCard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-10 place-items-center mx-20">
         {riskTiers.map((tier) => (
           <div key={tier.name}>
             <h4 className={cn("mb-3 font-medium", colorStyles[tier.color].text)}>

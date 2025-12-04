@@ -66,7 +66,7 @@ export function FeaturesSection() {
       <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-semibold text-foreground">Why Choose NanoFi Lending?</h3>
-          <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+          <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground whitespace-nowrap">
             Designed for asset-backed strategies
           </span>
         </div>
@@ -89,8 +89,8 @@ export function FeaturesSection() {
       <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-semibold text-foreground">Liquidation Protection</h3>
-          <div className="flex items-center gap-1.5 rounded-full bg-success/10 px-2 py-0.5">
-            <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+          <div className="flex items-center gap-1.5 rounded-full bg-success/10 px-2 py-0.5 whitespace-nowrap">
+            <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse flex-shrink-0" />
             <span className="text-xs font-medium text-success">Active hedging enabled</span>
           </div>
         </div>

@@ -19,9 +19,9 @@ export const TokenizeSteps = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-primary/80" />
       
       {/* Content */}
-      <div className="relative z-10 flex">
-        {/* Left side - Laptop mockup area */}
-        <div className="flex-1 p-8 flex items-center justify-center min-h-[400px]">
+      <div className="relative z-10 flex flex-col lg:flex-row">
+        {/* Image section - Above on mobile/tablet, Left on desktop */}
+        <div className="flex-1 p-4 sm:p-6 lg:p-8 flex items-center justify-center min-h-[300px] lg:min-h-[400px] order-1 lg:order-1">
           <div className="w-full max-w-md">
             <div className="bg-slate-700 rounded-t-xl p-2">
               <div className="flex gap-1.5">
@@ -41,8 +41,8 @@ export const TokenizeSteps = () => {
           </div>
         </div>
 
-        {/* Right side - Steps */}
-        <div className="w-96 p-8 flex flex-col justify-center">
+        {/* Steps section - Below on mobile/tablet, Right on desktop */}
+        <div className="w-full lg:w-96 p-4 sm:p-6 lg:p-8 flex flex-col justify-center order-2 lg:order-2">
           <h2 className="text-2xl font-bold text-primary-foreground mb-6">
             How to Tokenize<br />Your Patent
           </h2>

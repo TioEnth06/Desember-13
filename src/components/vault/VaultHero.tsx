@@ -10,8 +10,8 @@ export const VaultHero = () => {
           Manage, tokenize, and track your nanotechnology intellectual property portfolio
         </p>
       </div>
-      <Button className="gap-2 bg-card text-foreground border border-border hover:bg-muted">
-        <FileUp className="w-4 h-4" />
+      <Button className="gap-2 h-10" style={{ backgroundColor: '#000000', color: '#ffffff' }}>
+        <FileUp className="w-4 h-4" style={{ color: '#ffffff' }} />
         Tokenize Patent
       </Button>
     </div>

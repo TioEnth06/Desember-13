@@ -115,7 +115,7 @@ const Lending = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {stats.map((stat, index) => (
               <StatsCard
                 key={index}
@@ -127,7 +127,7 @@ const Lending = () => {
           </div>
 
           {/* Main Content Grid */}
-          <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
+          <div className="grid gap-6 lg:grid-cols-[300px_1fr] items-start">
             {/* LTV Calculator */}
             <LTVCalculator />
 
