@@ -22,14 +22,14 @@ const Governance = () => {
       <main className="p-6">
         <div className="max-w-[1400px] mx-auto space-y-6">
           {/* Hero Section */}
-          <div className="flex items-start justify-between">
-            <div>
+          <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between gap-4">
+            <div className="text-center md:text-left">
               <h1 className="text-2xl font-bold text-foreground">Dao Governance</h1>
               <p className="mt-1 text-muted-foreground">
                 Shape the future of nanotech innovation through decentralized decision-making
               </p>
             </div>
-            <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 w-full md:w-auto">
               <PlusCircle className="h-4 w-4" />
               Create Proposal
             </Button>

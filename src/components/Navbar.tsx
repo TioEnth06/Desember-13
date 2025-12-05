@@ -1,9 +1,11 @@
-import { Search, LayoutDashboard, Wallet, Vote, ShoppingCart, Coins, HandCoins, ChevronDown, Bell, Plus, Menu, X } from "lucide-react";
+import { Search, LayoutDashboard, Wallet, Vote, ShoppingCart, Coins, HandCoins, ChevronDown, Bell, Plus, Menu, X, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useDevice } from "@/hooks/use-device";
 import { useState } from "react";
+import { useTheme } from "next-themes";
+import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   AlertDialog,
@@ -69,6 +71,7 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
   const { isMobile, isTablet, isDesktop } = useDevice();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const navItems = [
     { icon: <LayoutDashboard className="w-4 h-4" />, label: "Overview", active: activePage === "overview", href: "/" },
@@ -124,7 +127,7 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
           {/* Search Icon - Mobile & Tablet */}
           {(isMobile || isTablet) && (
             <button className="p-1.5 sm:p-2 rounded-lg hover:bg-muted transition-colors">
-              <Search className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
+              <Search className="w-5 h-5 text-muted-foreground" />
             </button>
           )}
 
@@ -147,7 +150,7 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
                   isTablet ? "h-9 w-9" : "hidden lg:flex"
                 )}
               >
-                <Wallet className="w-4 h-4" />
+                <Wallet className="w-5 h-5" />
                 {isDesktop && <span>Connect Wallet</span>}
               </Button>
               <Button 
@@ -157,7 +160,7 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
                   isTablet ? "h-9 w-9" : "hidden lg:flex"
                 )}
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-5 h-5" />
                 {isDesktop && <span>New Vault</span>}
               </Button>
             </>
@@ -165,7 +168,7 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
 
           {/* Notifications - Always visible */}
           <button className="p-1.5 sm:p-2 rounded-lg hover:bg-muted transition-colors">
-            <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
+            <Bell className="w-5 h-5 text-muted-foreground" />
           </button>
 
           {/* User Avatar - Show on tablet and desktop */}
@@ -263,6 +266,24 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
                       <div className="text-sm font-medium text-foreground">George Farm</div>
                       <div className="text-xs text-muted-foreground">Patent Verified</div>
                     </div>
+                  </div>
+
+                  {/* Theme Toggle */}
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                    <div className="flex items-center gap-3">
+                      {theme === "dark" ? (
+                        <Moon className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Sun className="h-4 w-4 text-muted-foreground" />
+                      )}
+                      <span className="text-sm font-medium text-foreground">
+                        {theme === "dark" ? "Dark Mode" : "Light Mode"}
+                      </span>
+                    </div>
+                    <Switch
+                      checked={theme === "dark"}
+                      onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+                    />
                   </div>
                 </div>
               </SheetContent>
