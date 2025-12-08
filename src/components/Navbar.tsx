@@ -92,8 +92,8 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
             <img 
               src="/nanofi-logo.png" 
               alt="NanoFi Logo" 
-              className="h-7 sm:h-8 md:h-10 w-auto object-contain"
-              style={{ maxHeight: '40px', maxWidth: '120px' }}
+              className="h-10 sm:h-12 md:h-14 w-auto object-contain"
+              style={{ maxHeight: '56px', maxWidth: '160px' }}
             />
           </Link>
 
@@ -195,8 +195,8 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
                       <img 
                         src="/nanofi-logo.png" 
                         alt="NanoFi Logo" 
-                        className="h-7 sm:h-8 md:h-10 w-auto object-contain"
-                        style={{ maxHeight: '40px', maxWidth: '120px' }}
+                        className="h-10 sm:h-12 md:h-14 w-auto object-contain"
+                        style={{ maxHeight: '56px', maxWidth: '160px' }}
                       />
                     </Link>
                   </div>

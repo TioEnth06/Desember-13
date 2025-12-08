@@ -1,7 +1,7 @@
 
 export function DualVerificationSection() {
   return (
-    <div className="mb-8 rounded-xl bg-transparent p-8 animate-fade-in">
+    <div className="mb-8 rounded-xl bg-transparent p-0 animate-fade-in">
       <div className="mb-8 text-center">
         <h2 className="text-xl font-semibold text-foreground">Dual Verification System</h2>
         <p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground">
@@ -9,9 +9,9 @@ export function DualVerificationSection() {
         </p>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 mx-8 justify-center items-center">
+      <div className="flex flex-col md:flex-row gap-4 mx-auto justify-center items-center">
         {/* SPV Review Card */}
-        <div className="group rounded-xl border border-border bg-white p-4 transition-all duration-300 hover:border-primary/30 hover:shadow-md w-full md:w-[400px]">
+        <div className="group rounded-xl border border-border bg-white p-4 transition-all duration-300 hover:border-primary/30 hover:shadow-md w-full max-w-full sm:max-w-sm md:w-[400px]">
           <div className="mb-6 flex h-auto min-h-[200px] items-center justify-center rounded-lg overflow-hidden relative p-4" style={{ backgroundColor: '#F4F4F4' }}>
             <img 
               src="/daocheck.png" 
@@ -26,7 +26,7 @@ export function DualVerificationSection() {
         </div>
 
         {/* DAO Voting Card */}
-        <div className="group rounded-xl border border-border bg-white p-4 transition-all duration-300 hover:border-primary/30 hover:shadow-md w-full md:w-[400px]">
+        <div className="group rounded-xl border border-border bg-white p-4 transition-all duration-300 hover:border-primary/30 hover:shadow-md w-full max-w-full sm:max-w-sm md:w-[400px]">
           <div className="mb-6 flex h-auto min-h-[200px] items-center justify-center rounded-lg overflow-hidden relative p-4" style={{ backgroundColor: '#F4F4F4' }}>
             <img 
               src="/votingsss.png" 

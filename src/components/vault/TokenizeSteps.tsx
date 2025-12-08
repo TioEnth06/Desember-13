@@ -16,10 +16,10 @@ export const TokenizeSteps = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-slate-600 via-slate-500 to-slate-400" />
       
       {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-primary/80" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/20 to-blue-600/40" />
       
       {/* Content */}
-      <div className="relative z-10 flex flex-col lg:flex-row">
+      <div className="relative z-10 flex flex-col lg:flex-row items-center justify-center mx-4">
         {/* Image section - Above on mobile/tablet, Left on desktop */}
         <div className="flex-1 p-4 sm:p-6 lg:p-8 flex items-center justify-center min-h-[300px] lg:min-h-[400px] order-1 lg:order-1">
           <div className="w-full max-w-md">
@@ -42,22 +42,27 @@ export const TokenizeSteps = () => {
         </div>
 
         {/* Steps section - Below on mobile/tablet, Right on desktop */}
-        <div className="w-full lg:w-96 p-4 sm:p-6 lg:p-8 flex flex-col justify-center order-2 lg:order-2">
-          <h2 className="text-2xl font-bold text-primary-foreground mb-6">
+        <div className="w-full lg:w-96 p-4 m-4 flex flex-col justify-center items-center order-2 lg:order-2 rounded-xl" style={{ backgroundColor: 'rgba(0, 0, 0, 0.8)' }}>
+          <h2 className="text-2xl font-bold text-primary-foreground mb-6 text-center">
             How to Tokenize<br />Your Patent
           </h2>
           
-          <div className="space-y-4 mb-6">
+          <div className="space-y-4 mb-6 w-full">
             {steps.map((step, index) => (
               <div
                 key={index}
-                className="flex gap-3 animate-fade-in"
+                className="flex gap-3 animate-fade-in relative"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="w-6 h-6 rounded-full bg-accent flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-bold text-primary-foreground">{step.number}</span>
+                <div className="flex flex-col items-center">
+                  <div className="w-6 h-6 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold text-primary-foreground">{step.number}</span>
+                  </div>
+                  {index < steps.length - 1 && (
+                    <div className="w-0.5 h-full min-h-[3rem] mt-2" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)' }} />
+                  )}
                 </div>
-                <div>
+                <div className="flex-1">
                   <p className="text-xs text-primary-foreground/70 mb-0.5">{step.title}</p>
                   <p className="text-sm text-primary-foreground/90">{step.description}</p>
                 </div>
