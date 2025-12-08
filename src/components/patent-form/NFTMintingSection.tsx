@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 interface NFTMintingSectionProps {
   onContinue: () => void;
 }
 
 export function NFTMintingSection({ onContinue }: NFTMintingSectionProps) {
+  const [isFractionalizationEnabled, setIsFractionalizationEnabled] = useState(false);
+
   return (
     <div className="space-y-6">
       {/* NFT Name */}
@@ -52,21 +55,27 @@ export function NFTMintingSection({ onContinue }: NFTMintingSectionProps) {
               Allow your IP-NFT to be divided into fractional ownership tokens
             </p>
           </div>
-          <Switch id="fractionalization" />
+          <Switch 
+            id="fractionalization" 
+            checked={isFractionalizationEnabled}
+            onCheckedChange={setIsFractionalizationEnabled}
+          />
         </div>
       </div>
 
       {/* Fractionalization Options (conditionally shown) */}
-      <div className="space-y-4 pl-4 border-l-2 border-muted">
-        <div>
-          <label className="form-label">Total Fraction Supply</label>
-          <Input placeholder="e.g., 1,000,000" type="number" />
+      {isFractionalizationEnabled && (
+        <div className="space-y-4 pl-4 border-l-2 border-muted">
+          <div>
+            <label className="form-label">Total Fraction Supply</label>
+            <Input placeholder="e.g., 1,000,000" type="number" />
+          </div>
+          <div>
+            <label className="form-label">Initial Price per Fraction (USD)</label>
+            <Input placeholder="e.g., 0.01" type="number" step="0.01" />
+          </div>
         </div>
-        <div>
-          <label className="form-label">Initial Price per Fraction (USD)</label>
-          <Input placeholder="e.g., 0.01" type="number" step="0.01" />
-        </div>
-      </div>
+      )}
 
       <div className="flex justify-end pt-4">
         <Button onClick={onContinue} className="gap-2">
