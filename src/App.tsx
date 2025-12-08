@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Vault from "./pages/Vault";
 import Lending from "./pages/Lending";
 import Governance from "./pages/Governance";
+import TokenizePatent from "./pages/TokenizePatent";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/vault" element={<Vault />} />
+            <Route path="/vault/tokenize" element={<TokenizePatent />} />
             <Route path="/lending" element={<Lending />} />
             <Route path="/governance" element={<Governance />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

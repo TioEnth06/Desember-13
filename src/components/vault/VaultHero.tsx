@@ -1,7 +1,10 @@
 import { FileUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export const VaultHero = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between gap-4">
       <div className="text-center md:text-left">
@@ -10,7 +13,11 @@ export const VaultHero = () => {
           Manage, tokenize, and track your nanotechnology intellectual property portfolio
         </p>
       </div>
-      <Button className="gap-2 h-10 w-full md:w-auto" style={{ backgroundColor: '#000000', color: '#ffffff' }}>
+      <Button 
+        className="gap-2 h-10 w-full md:w-auto" 
+        style={{ backgroundColor: '#000000', color: '#ffffff' }}
+        onClick={() => navigate("/vault/tokenize")}
+      >
         <FileUp className="w-4 h-4" style={{ color: '#ffffff' }} />
         Tokenize Patent
       </Button>

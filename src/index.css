@@ -130,6 +130,36 @@
   .vote-card {
     @apply bg-card rounded-xl p-4 border border-border hover:border-accent/30 transition-colors;
   }
+
+  /* Patent Form Styles */
+  .section-header {
+    @apply bg-primary text-primary-foreground rounded-t-lg p-4 flex items-center justify-between cursor-pointer transition-all duration-200;
+  }
+
+  .section-header:hover {
+    @apply bg-primary/95;
+  }
+
+  .section-content {
+    @apply bg-card border border-t-0 border-border rounded-b-lg p-6;
+  }
+
+  .form-label {
+    @apply text-sm font-medium text-foreground mb-1.5 block;
+  }
+
+  .form-label-required::after {
+    content: '*';
+    @apply text-destructive ml-0.5;
+  }
+
+  .form-hint {
+    @apply text-xs text-muted-foreground mt-1;
+  }
+
+  .auto-saved-badge {
+    @apply inline-flex items-center gap-1.5 text-success text-xs font-medium bg-success/10 px-2 py-1 rounded;
+  }
 }
 
 @layer utilities {
