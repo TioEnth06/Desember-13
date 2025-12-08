@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import Vault from "./pages/Vault";
 import Lending from "./pages/Lending";
 import Governance from "./pages/Governance";
+import Marketplace from "./pages/Marketplace";
+import Staking from "./pages/Staking";
 import TokenizePatent from "./pages/TokenizePatent";
 import NotFound from "./pages/NotFound";
 
@@ -26,6 +28,8 @@ const App = () => (
             <Route path="/vault/tokenize" element={<TokenizePatent />} />
             <Route path="/lending" element={<Lending />} />
             <Route path="/governance" element={<Governance />} />
+            <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/staking" element={<Staking />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

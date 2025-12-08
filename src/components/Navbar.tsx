@@ -78,8 +78,8 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
     { icon: <Wallet className="w-4 h-4" />, label: "Vault", active: activePage === "vault", href: "/vault" },
     { icon: <HandCoins className="w-4 h-4" />, label: "Lending", active: activePage === "lending", href: "/lending" },
     { icon: <Vote className="w-4 h-4" />, label: "Governance", active: activePage === "governance", href: "/governance" },
-    { icon: <ShoppingCart className="w-4 h-4" />, label: "Marketplace", hasSubmenu: true, active: activePage === "marketplace", onComingSoon: true },
-    { icon: <Coins className="w-4 h-4" />, label: "Staking", hasSubmenu: true, active: activePage === "staking", onComingSoon: true },
+    { icon: <ShoppingCart className="w-4 h-4" />, label: "Marketplace", hasSubmenu: true, active: activePage === "marketplace", href: "/marketplace" },
+    { icon: <Coins className="w-4 h-4" />, label: "Staking", hasSubmenu: true, active: activePage === "staking", href: "/staking" },
   ];
 
   return (
