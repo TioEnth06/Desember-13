@@ -18,7 +18,7 @@ const TokenizePatent = () => {
           <div className="mb-6">
             <button
               onClick={handleClose}
-              className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

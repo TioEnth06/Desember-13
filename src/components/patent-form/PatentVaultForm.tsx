@@ -45,10 +45,26 @@ interface PatentVaultFormProps {
 export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
   const [openSection, setOpenSection] = useState<SectionId>('inventor');
   const [completedSections, setCompletedSections] = useState<SectionId[]>([]);
+  const [startedSections, setStartedSections] = useState<SectionId[]>(['inventor']); // Track sections that have been opened
   const { toast } = useToast();
 
   const handleSectionToggle = (sectionId: SectionId) => {
     setOpenSection(openSection === sectionId ? sectionId : sectionId);
+    // Mark section as started when opened
+    if (!startedSections.includes(sectionId)) {
+      setStartedSections([...startedSections, sectionId]);
+    }
+  };
+
+  // Determine progress status for a section
+  const getProgressStatus = (sectionId: SectionId): "undone" | "on progress" | "done" => {
+    if (completedSections.includes(sectionId)) {
+      return "done";
+    } else if (startedSections.includes(sectionId) || openSection === sectionId) {
+      return "on progress";
+    } else {
+      return "undone";
+    }
   };
 
   const handleContinue = (currentSection: SectionId) => {
@@ -117,6 +133,7 @@ export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
             description={section.description}
             isOpen={openSection === section.id}
             isComplete={completedSections.includes(section.id)}
+            progress={getProgressStatus(section.id)}
             onToggle={() => handleSectionToggle(section.id)}
           >
             {renderSectionContent(section.id)}

@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Info } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
@@ -76,6 +76,16 @@ export function NFTMintingSection({ onContinue }: NFTMintingSectionProps) {
           </div>
         </div>
       )}
+
+      {/* NFT Configuration Note */}
+      <div className="rounded-lg border border-purple-500/30 bg-purple-50 dark:bg-purple-900/20 p-4 flex items-start gap-3">
+        <div className="flex-shrink-0 mt-0.5">
+          <Info className="w-5 h-5 text-purple-600 dark:text-purple-500" />
+        </div>
+        <p className="text-sm text-purple-800 dark:text-purple-200">
+          <span className="font-medium">NFT Configuration:</span> These parameters define how your patent will appear and function on the blockchain. Choose carefully as some settings cannot be changed after minting.
+        </p>
+      </div>
 
       <div className="flex justify-end pt-4">
         <Button onClick={onContinue} className="gap-2">
