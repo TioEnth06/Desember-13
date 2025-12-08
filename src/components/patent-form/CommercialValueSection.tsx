@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Info } from "lucide-react";
 
 interface CommercialValueSectionProps {
   onContinue: () => void;
@@ -94,6 +94,16 @@ export function CommercialValueSection({ onContinue }: CommercialValueSectionPro
           <span className="text-xs text-muted-foreground">Optional</span>
         </div>
         <Input placeholder="List any current partners, licensees, or users" />
+      </div>
+
+      {/* Market Insight Note */}
+      <div className="rounded-lg border border-green-500/30 bg-green-50 dark:bg-green-900/20 p-4 flex items-start gap-3">
+        <div className="flex-shrink-0 mt-0.5">
+          <Info className="w-5 h-5 text-green-600 dark:text-green-500" />
+        </div>
+        <p className="text-sm text-green-800 dark:text-green-200">
+          <span className="font-medium">Market Insight:</span> Detailed commercial information helps potential investors better understand the value proposition of your patent.
+        </p>
       </div>
 
       <div className="flex justify-end pt-4">

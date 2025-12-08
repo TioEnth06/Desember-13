@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowRight, Upload, FileText, Image, BarChart3 } from "lucide-react";
+import { ArrowRight, Upload, FileText, Image, BarChart3, Info } from "lucide-react";
 
 interface DocumentationSectionProps {
   onContinue: () => void;
@@ -35,15 +35,15 @@ function FileUpload({ label, required, hint, icon, accept }: FileUploadProps) {
 }
 
 const trlLevels = [
-  { value: "1", label: "TRL 1 - Basic principles observed" },
-  { value: "2", label: "TRL 2 - Technology concept formulated" },
-  { value: "3", label: "TRL 3 - Experimental proof of concept" },
-  { value: "4", label: "TRL 4 - Technology validated in lab" },
-  { value: "5", label: "TRL 5 - Technology validated in relevant environment" },
-  { value: "6", label: "TRL 6 - Technology demonstrated in relevant environment" },
-  { value: "7", label: "TRL 7 - System prototype demonstration in operational environment" },
-  { value: "8", label: "TRL 8 - System complete and qualified" },
-  { value: "9", label: "TRL 9 - Actual system proven in operational environment" },
+  { value: "research", label: "Research" },
+  { value: "technology-formulation", label: "Technology Formulation" },
+  { value: "experimental-proof", label: "Experimental Proof" },
+  { value: "lab-validation", label: "Lab Validation" },
+  { value: "integrated-validation", label: "Integrated validation" },
+  { value: "prototype", label: "Prototype" },
+  { value: "demo", label: "Demo" },
+  { value: "completed-qualified", label: "Completed and Qualified" },
+  { value: "commercialized", label: "Commercialized" },
 ];
 
 export function DocumentationSection({ onContinue }: DocumentationSectionProps) {
@@ -92,6 +92,16 @@ export function DocumentationSection({ onContinue }: DocumentationSectionProps) 
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Note */}
+      <div className="rounded-lg border border-blue-500/30 bg-blue-50 dark:bg-blue-900/20 p-4 flex items-start gap-3">
+        <div className="flex-shrink-0 mt-0.5">
+          <Info className="w-5 h-5 text-blue-600 dark:text-blue-500" />
+        </div>
+        <p className="text-sm text-blue-800 dark:text-blue-200">
+          <span className="font-medium">Note:</span> All documents will be securely stored on IPFS and encrypted for confidentiality.
+        </p>
       </div>
 
       <div className="flex justify-end pt-4">

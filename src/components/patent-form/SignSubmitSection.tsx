@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { PenTool, Shield, FileCheck } from "lucide-react";
+import { PenTool, Shield, FileCheck, Info } from "lucide-react";
 
 interface SignSubmitSectionProps {
   onSubmit: () => void;
@@ -75,6 +75,16 @@ export function SignSubmitSection({ onSubmit }: SignSubmitSectionProps) {
             <li>• Upon approval, your IP-NFT will be minted and added to your portfolio</li>
           </ul>
         </div>
+      </div>
+
+      {/* Review Period Note */}
+      <div className="rounded-lg border border-yellow-500/30 bg-yellow-50 dark:bg-yellow-900/20 p-4 flex items-start gap-3">
+        <div className="flex-shrink-0 mt-0.5">
+          <Info className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
+        </div>
+        <p className="text-sm text-yellow-800 dark:text-yellow-200">
+          <span className="font-medium">Review Period:</span> Your application will be reviewed within 5-7 business days. You will be notified via email once the review is complete.
+        </p>
       </div>
 
       <div className="flex justify-end pt-4">

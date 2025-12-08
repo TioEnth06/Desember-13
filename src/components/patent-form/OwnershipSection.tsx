@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Upload, FileText, Plus, Trash2 } from "lucide-react";
+import { ArrowRight, Upload, FileText, Plus, Trash2, Info } from "lucide-react";
 import { useState } from "react";
 
 interface OwnershipSectionProps {
@@ -109,6 +109,16 @@ export function OwnershipSection({ onContinue }: OwnershipSectionProps) {
           <Input placeholder="100" type="number" min="0" max="100" className="pr-8" />
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
         </div>
+      </div>
+
+      {/* Important Warning Note */}
+      <div className="rounded-lg border border-yellow-500/30 bg-yellow-50 dark:bg-yellow-900/20 p-4 flex items-start gap-3">
+        <div className="flex-shrink-0 mt-0.5">
+          <Info className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
+        </div>
+        <p className="text-sm text-yellow-800 dark:text-yellow-200">
+          <span className="font-medium">Important:</span> Providing false ownership information is a serious offense and may result in legal action and permanent ban from the platform.
+        </p>
       </div>
 
       <div className="flex justify-end pt-4">

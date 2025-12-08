@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, DollarSign } from "lucide-react";
+import { ArrowRight, DollarSign, Info } from "lucide-react";
 
 interface ValuationSectionProps {
   onContinue: () => void;
@@ -67,6 +67,16 @@ export function ValuationSection({ onContinue }: ValuationSectionProps) {
           placeholder="Describe your expected licensing terms, royalty rates, or revenue-sharing structure..."
           className="min-h-[100px]"
         />
+      </div>
+
+      {/* Professional Review Note */}
+      <div className="rounded-lg border border-blue-500/30 bg-blue-50 dark:bg-blue-900/20 p-4 flex items-start gap-3">
+        <div className="flex-shrink-0 mt-0.5">
+          <Info className="w-5 h-5 text-blue-600 dark:text-blue-500" />
+        </div>
+        <p className="text-sm text-blue-800 dark:text-blue-200">
+          <span className="font-medium">Professional Review:</span> All valuations will be reviewed by our expert team. The final valuation may differ based on market analysis and technical assessment.
+        </p>
       </div>
 
       <div className="flex justify-end pt-4">
