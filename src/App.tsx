@@ -11,6 +11,7 @@ import Governance from "./pages/Governance";
 import Marketplace from "./pages/Marketplace";
 import Staking from "./pages/Staking";
 import TokenizePatent from "./pages/TokenizePatent";
+import Launchpad from "./pages/Launchpad";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/governance" element={<Governance />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/staking" element={<Staking />} />
+            <Route path="/launchpad" element={<Launchpad />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

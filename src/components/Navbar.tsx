@@ -149,9 +149,12 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
                   "gap-2",
                   isTablet ? "h-9 w-9" : "hidden lg:flex"
                 )}
+                asChild
               >
-                <Wallet className="w-5 h-5" />
-                {isDesktop && <span>Connect Wallet</span>}
+                <Link to="/launchpad">
+                  <Wallet className="w-5 h-5" />
+                  {isDesktop && <span>Connect Wallet</span>}
+                </Link>
               </Button>
               <Button 
                 size={isTablet ? "icon" : "default"}
@@ -247,9 +250,11 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
 
                   {/* Actions */}
                   <div className="flex flex-col gap-2 mt-4 pt-4 border-t">
-                    <Button variant="outline" className="w-full gap-2 justify-start">
-                      <Wallet className="w-4 h-4" />
-                      Connect Wallet
+                    <Button variant="outline" className="w-full gap-2 justify-start" asChild>
+                      <Link to="/launchpad" onClick={() => setMobileMenuOpen(false)}>
+                        <Wallet className="w-4 h-4" />
+                        Connect Wallet
+                      </Link>
                     </Button>
                     <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 justify-start">
                       <Plus className="w-4 h-4" />
