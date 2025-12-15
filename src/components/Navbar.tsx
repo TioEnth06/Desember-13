@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -73,13 +74,13 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
-  const navItems = [
-    { icon: <LayoutDashboard className="w-4 h-4" />, label: "Overview", active: activePage === "overview", href: "/" },
-    { icon: <Wallet className="w-4 h-4" />, label: "Vault", active: activePage === "vault", href: "/vault" },
-    { icon: <HandCoins className="w-4 h-4" />, label: "Lending", active: activePage === "lending", href: "/lending" },
-    { icon: <Vote className="w-4 h-4" />, label: "Governance", active: activePage === "governance", href: "/governance" },
-    { icon: <ShoppingCart className="w-4 h-4" />, label: "Marketplace", active: activePage === "marketplace", href: "/marketplace" },
-    { icon: <Coins className="w-4 h-4" />, label: "Staking", active: activePage === "staking", href: "/staking" },
+  const navItems: NavItemWithDialogProps[] = [
+    { icon: <LayoutDashboard className="w-4 h-4" />, label: "Overview", active: activePage === "overview", href: "/", hasSubmenu: false, onComingSoon: undefined },
+    { icon: <Wallet className="w-4 h-4" />, label: "Vault", active: activePage === "vault", href: "/vault", hasSubmenu: false, onComingSoon: undefined },
+    { icon: <HandCoins className="w-4 h-4" />, label: "Lending", active: activePage === "lending", href: "/lending", hasSubmenu: false, onComingSoon: undefined },
+    { icon: <Vote className="w-4 h-4" />, label: "Funding", active: activePage === "governance", href: "/governance", hasSubmenu: false, onComingSoon: undefined },
+    { icon: <ShoppingCart className="w-4 h-4" />, label: "Marketplace", active: activePage === "marketplace", href: "/marketplace", hasSubmenu: false, onComingSoon: undefined },
+    { icon: <Coins className="w-4 h-4" />, label: "Staking", active: activePage === "staking", href: "/staking", hasSubmenu: false, onComingSoon: undefined },
   ];
 
   return (
@@ -177,9 +178,14 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
           {/* User Avatar - Show on tablet and desktop */}
           {!isMobile && (
             <div className="hidden sm:flex items-center gap-2 pl-2 md:pl-3 border-l border-border flex-shrink-0">
-              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
-                <span className="text-primary-foreground text-xs font-medium">GF</span>
-              </div>
+              <Link to="/profile" className="cursor-pointer">
+                <Avatar className="w-7 h-7 md:w-8 md:h-8 hover:opacity-80 transition-opacity">
+                  <AvatarImage src="" alt="User" />
+                  <AvatarFallback className="bg-gradient-to-br from-rose-400 to-rose-600 text-primary-foreground text-xs font-medium">
+                    GF
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
             </div>
           )}
 
@@ -263,15 +269,22 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
                   </div>
 
                   {/* User Profile */}
-                  <div className="flex items-center gap-3 mt-4 pt-4 border-t">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
-                      <span className="text-primary-foreground text-xs font-medium">GF</span>
-                    </div>
+                  <Link 
+                    to="/profile" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 mt-4 pt-4 border-t cursor-pointer hover:opacity-80 transition-opacity"
+                  >
+                    <Avatar className="w-10 h-10">
+                      <AvatarImage src="" alt="George Farm" />
+                      <AvatarFallback className="bg-gradient-to-br from-rose-400 to-rose-600 text-primary-foreground text-xs font-medium">
+                        GF
+                      </AvatarFallback>
+                    </Avatar>
                     <div>
                       <div className="text-sm font-medium text-foreground">George Farm</div>
                       <div className="text-xs text-muted-foreground">Patent Verified</div>
                     </div>
-                  </div>
+                  </Link>
 
                   {/* Theme Toggle */}
                   <div className="flex items-center justify-between mt-4 pt-4 border-t">

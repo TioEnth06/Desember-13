@@ -13,6 +13,7 @@ import Staking from "./pages/Staking";
 import TokenizePatent from "./pages/TokenizePatent";
 import RequestLoan from "./pages/RequestLoan";
 import Launchpad from "./pages/Launchpad";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/staking" element={<Staking />} />
             <Route path="/launchpad" element={<Launchpad />} />
+            <Route path="/profile" element={<Profile />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
