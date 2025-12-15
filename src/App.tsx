@@ -11,6 +11,7 @@ import Governance from "./pages/Governance";
 import Marketplace from "./pages/Marketplace";
 import Staking from "./pages/Staking";
 import TokenizePatent from "./pages/TokenizePatent";
+import RequestLoan from "./pages/RequestLoan";
 import Launchpad from "./pages/Launchpad";
 import NotFound from "./pages/NotFound";
 
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/vault" element={<Vault />} />
             <Route path="/vault/tokenize" element={<TokenizePatent />} />
             <Route path="/lending" element={<Lending />} />
+            <Route path="/lending/request-loan" element={<RequestLoan />} />
             <Route path="/governance" element={<Governance />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/staking" element={<Staking />} />

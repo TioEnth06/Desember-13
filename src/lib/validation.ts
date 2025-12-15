@@ -84,3 +84,91 @@ export const inventorSchema = z.object({
 
 export type InventorFormData = z.infer<typeof inventorSchema>;
 
+// Loan form validation schemas
+export const borrowerSchema = z.object({
+  fullName: z.string().min(1, "Full name is required"),
+  role: z.string().min(1, "Role is required"),
+  email: emailSchema,
+  phone: phoneSchema,
+  country: z.string().min(1, "Country/Jurisdiction is required"),
+});
+
+export type BorrowerFormData = z.infer<typeof borrowerSchema>;
+
+export const collateralSchema = z.object({
+  ipNftId: z.string().min(1, "Please select an IP-NFT"),
+  patentTitle: z.string(),
+  valuationSource: z.string().min(1, "Valuation source is required"),
+  verifiedValue: z.string().min(1, "Verified collateral value is required"),
+});
+
+export type CollateralFormData = z.infer<typeof collateralSchema>;
+
+export const loanRequestSchema = z.object({
+  requestedAmount: z.string().min(1, "Requested loan amount is required"),
+  loanType: z.string().min(1, "Loan type is required"),
+  loanDuration: z.string().min(1, "Loan duration is required"),
+  interestModel: z.string().min(1, "Interest model is required"),
+  purpose: z.string().min(1, "Purpose of loan is required"),
+  fundingProposal: z.any().nullable(),
+});
+
+export type LoanRequestFormData = z.infer<typeof loanRequestSchema>;
+
+export const riskComplianceSchema = z.object({
+  existingObligations: z.string().min(1, "Please disclose existing obligations"),
+  coOwnership: z.string().min(1, "Co-ownership confirmation is required"),
+  patentStatus: z.string().min(1, "Patent status is required"),
+  materialRisks: z.string().optional(),
+  ipLegalDocs: z.any().nullable(),
+});
+
+export type RiskComplianceFormData = z.infer<typeof riskComplianceSchema>;
+
+export const ltvRequestSchema = z.object({
+  preferredLTV: z.string().min(1, "Preferred LTV is required"),
+  ltvRiskInfo: z.string().min(1, "LTV risk information is required"),
+  collateralValue: z.string().min(1, "Collateral value is required"),
+  maxLoanAmount: z.string(),
+});
+
+export type LTVRequestFormData = z.infer<typeof ltvRequestSchema>;
+
+export const repaymentSchema = z.object({
+  repaymentMethod: z.string().min(1, "Repayment method is required"),
+  repaymentSource: z.string().min(1, "Source of repayment is required"),
+  royaltyShare: z.string().optional(),
+});
+
+export type RepaymentFormData = z.infer<typeof repaymentSchema>;
+
+export const documentsSchema = z.object({
+  patentCertificate: z.any().refine((val) => val !== null && val !== undefined, {
+    message: "Patent Certificate/Filing Document is required"
+  }),
+  valuationDocument: z.any().refine((val) => val !== null && val !== undefined, {
+    message: "Valuation Document is required"
+  }),
+  technicalDocumentation: z.any().refine((val) => val !== null && val !== undefined, {
+    message: "Technical Documentation is required"
+  }),
+  financialProjection: z.any().refine((val) => val !== null && val !== undefined, {
+    message: "Financial Projection is required"
+  }),
+  companyRegistration: z.any().refine((val) => val !== null && val !== undefined, {
+    message: "Company Registration/KYC is required"
+  }),
+});
+
+export type DocumentsFormData = z.infer<typeof documentsSchema>;
+
+export const termsSchema = z.object({
+  lockingMethod: z.string().min(1, "Collateral locking method is required"),
+  autoLiquidationConsent: z.boolean().refine(val => val === true, {
+    message: "You must consent to auto-liquidation terms"
+  }),
+  defaultHandling: z.string().min(1, "Default handling preference is required"),
+});
+
+export type TermsFormData = z.infer<typeof termsSchema>;
+

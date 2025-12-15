@@ -8,6 +8,7 @@ import { PositionCard } from "@/components/lending/PositionCard";
 import { FeaturesSection } from "@/components/lending/FeaturesSection";
 import { Wallet, FileCheck, CreditCard, Users, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const stats = [
   { icon: Wallet, value: "$45.M", label: "Total Borrowed" },
@@ -95,6 +96,8 @@ const positions = [
 ];
 
 const Lending = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar activePage="lending" />
@@ -108,7 +111,10 @@ const Lending = () => {
                 Manage, tokenize, and trade your nanotechnology intellectual property portfolio
               </p>
             </div>
-            <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 w-full md:w-auto">
+            <Button 
+              onClick={() => navigate("/lending/request-loan")}
+              className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 w-full md:w-auto"
+            >
               <FileText className="h-4 w-4" />
               Request Loan
             </Button>
