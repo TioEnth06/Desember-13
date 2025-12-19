@@ -22,11 +22,9 @@ interface RiskComplianceSectionProps {
 }
 
 const patentStatuses = [
-  "Active - In Force",
-  "Pending Application",
-  "Provisional",
-  "Expired",
-  "Abandoned"
+  "Granted",
+  "Pending",
+  "Under Review"
 ];
 
 export function RiskComplianceSection({ onContinue }: RiskComplianceSectionProps) {

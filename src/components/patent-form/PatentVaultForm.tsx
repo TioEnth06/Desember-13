@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { FormSection } from "./FormSection";
+import React, { useState } from "react";
 import { InventorSection } from "./InventorSection";
 import { PatentDetailsSection } from "./PatentDetailsSection";
 import { DocumentationSection } from "./DocumentationSection";
@@ -10,6 +9,8 @@ import { NFTMintingSection } from "./NFTMintingSection";
 import { SignSubmitSection } from "./SignSubmitSection";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 type SectionId = 
   | 'inventor' 
@@ -43,40 +44,67 @@ interface PatentVaultFormProps {
 }
 
 export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
-  const [openSection, setOpenSection] = useState<SectionId>('inventor');
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [completedSections, setCompletedSections] = useState<SectionId[]>([]);
-  const [startedSections, setStartedSections] = useState<SectionId[]>(['inventor']); // Track sections that have been opened
+  const [sectionValidation, setSectionValidation] = useState<Record<SectionId, boolean>>({});
+  const [formData, setFormData] = useState<Record<SectionId, any>>({});
   const { toast } = useToast();
 
-  const handleSectionToggle = (sectionId: SectionId) => {
-    setOpenSection(openSection === sectionId ? sectionId : sectionId);
-    // Mark section as started when opened
-    if (!startedSections.includes(sectionId)) {
-      setStartedSections([...startedSections, sectionId]);
-    }
+  const currentSection = sections[currentSectionIndex];
+  const isFirstSection = currentSectionIndex === 0;
+  const isLastSection = currentSectionIndex === sections.length - 1;
+  const progress = ((currentSectionIndex + 1) / sections.length) * 100;
+
+  const handleValidationChange = (sectionId: SectionId, isValid: boolean) => {
+    setSectionValidation(prev => ({
+      ...prev,
+      [sectionId]: isValid
+    }));
   };
 
-  // Determine progress status for a section
-  const getProgressStatus = (sectionId: SectionId): "undone" | "on progress" | "done" => {
-    if (completedSections.includes(sectionId)) {
-      return "done";
-    } else if (startedSections.includes(sectionId) || openSection === sectionId) {
-      return "on progress";
-    } else {
-      return "undone";
-    }
+  const handleDataChange = (sectionId: SectionId, data: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [sectionId]: data
+    }));
   };
 
-  const handleContinue = (currentSection: SectionId) => {
+  const handleContinue = (currentSectionId: SectionId) => {
+    // Check if current section is valid
+    const isValid = sectionValidation[currentSectionId];
+    if (!isValid) {
+      toast({
+        title: "Please complete all required fields",
+        description: "All required fields must be filled before proceeding.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Mark current section as complete
-    if (!completedSections.includes(currentSection)) {
-      setCompletedSections([...completedSections, currentSection]);
+    if (!completedSections.includes(currentSectionId)) {
+      setCompletedSections([...completedSections, currentSectionId]);
     }
     
     // Move to next section
-    const currentIndex = sections.findIndex(s => s.id === currentSection);
-    if (currentIndex < sections.length - 1) {
-      setOpenSection(sections[currentIndex + 1].id);
+    if (currentSectionIndex < sections.length - 1) {
+      setCurrentSectionIndex(currentSectionIndex + 1);
+      // Scroll to top when moving to next section
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentSectionIndex > 0) {
+      setCurrentSectionIndex(currentSectionIndex - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleNext = () => {
+    if (currentSectionIndex < sections.length - 1) {
+      setCurrentSectionIndex(currentSectionIndex + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -94,19 +122,44 @@ export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
   const renderSectionContent = (sectionId: SectionId) => {
     switch (sectionId) {
       case 'inventor':
-        return <InventorSection onContinue={() => handleContinue('inventor')} />;
+        return <InventorSection 
+          onContinue={() => handleContinue('inventor')} 
+          onValidationChange={(isValid) => handleValidationChange('inventor', isValid)}
+          initialData={formData['inventor']}
+          onDataChange={(data) => handleDataChange('inventor', data)}
+        />;
       case 'patent':
-        return <PatentDetailsSection onContinue={() => handleContinue('patent')} />;
+        return <PatentDetailsSection 
+          onContinue={() => handleContinue('patent')}
+          onValidationChange={(isValid) => handleValidationChange('patent', isValid)}
+          initialData={formData['patent']}
+          onDataChange={(data) => handleDataChange('patent', data)}
+        />;
       case 'documentation':
-        return <DocumentationSection onContinue={() => handleContinue('documentation')} />;
+        return <DocumentationSection 
+          onContinue={() => handleContinue('documentation')}
+          onValidationChange={(isValid) => handleValidationChange('documentation', isValid)}
+        />;
       case 'commercial':
-        return <CommercialValueSection onContinue={() => handleContinue('commercial')} />;
+        return <CommercialValueSection 
+          onContinue={() => handleContinue('commercial')}
+          onValidationChange={(isValid) => handleValidationChange('commercial', isValid)}
+        />;
       case 'ownership':
-        return <OwnershipSection onContinue={() => handleContinue('ownership')} />;
+        return <OwnershipSection 
+          onContinue={() => handleContinue('ownership')}
+          onValidationChange={(isValid) => handleValidationChange('ownership', isValid)}
+        />;
       case 'valuation':
-        return <ValuationSection onContinue={() => handleContinue('valuation')} />;
+        return <ValuationSection 
+          onContinue={() => handleContinue('valuation')}
+          onValidationChange={(isValid) => handleValidationChange('valuation', isValid)}
+        />;
       case 'nft':
-        return <NFTMintingSection onContinue={() => handleContinue('nft')} />;
+        return <NFTMintingSection 
+          onContinue={() => handleContinue('nft')}
+          onValidationChange={(isValid) => handleValidationChange('nft', isValid)}
+        />;
       case 'submit':
         return <SignSubmitSection onSubmit={handleSubmit} />;
       default:
@@ -114,42 +167,119 @@ export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
     }
   };
 
+  // Check if current section is valid
+  // For sections with forms (like inventor), use their reported validation state
+  // For sections without forms, they report as valid by default (can be enhanced later)
+  const isCurrentSectionValid = sectionValidation[currentSection.id] ?? false;
+
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-5xl mx-auto">
+      {/* Progress Indicator */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium text-muted-foreground">
+            Step {currentSectionIndex + 1} of {sections.length}
+          </span>
+          <span className="text-sm font-medium text-muted-foreground">
+            {Math.round(progress)}% Complete
+          </span>
+        </div>
+        <Progress value={progress} className="h-2" />
+      </div>
+
+      {/* Step Indicator */}
+      <div className="mb-6">
+        <div className="flex items-start justify-between overflow-x-auto py-2 scrollbar-hide w-full">
+          {sections.map((section, index) => {
+            const isCompleted = completedSections.includes(section.id);
+            const isCurrent = index === currentSectionIndex;
+            const isPast = index < currentSectionIndex;
+            
+            return (
+              <div key={section.id} className="flex items-start flex-1 justify-center relative">
+                <div className="flex flex-col items-center gap-4 w-full">
+                  <div className="flex items-center justify-center w-full relative">
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-all flex-shrink-0 z-10 ${
+                        isCurrent
+                          ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 animate-pulse scale-110 shadow-lg shadow-primary/50'
+                          : isCompleted || isPast
+                          ? 'bg-success text-success-foreground'
+                          : 'bg-muted text-muted-foreground'
+                      }`}
+                      style={isCurrent ? {
+                        animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite, scale 0.3s ease-out'
+                      } : {}}
+                    >
+                      {isCompleted || isPast ? (
+                        <CheckCircle2 className="w-5 h-5" />
+                      ) : (
+                        <span className="text-sm font-semibold">{index + 1}</span>
+                      )}
+                    </div>
+                    {index < sections.length - 1 && (
+                      <div
+                        className={`absolute left-1/2 h-1 w-full transition-all ${
+                          isPast ? 'bg-success' : 'bg-muted'
+                        }`}
+                        style={{ marginLeft: '20px', top: '50%', transform: 'translateY(-50%)' }}
+                      />
+                    )}
+                  </div>
+                  <span
+                    className={`text-xs text-center max-w-[80px] transition-all ${
+                      isCurrent 
+                        ? 'font-semibold text-foreground animate-pulse' 
+                        : 'text-muted-foreground'
+                    }`}
+                  >
+                    {section.title}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Form Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Patent Vault Form</h1>
-        <p className="text-muted-foreground max-w-xl mx-auto">
-          Start by describing the inventor and organization behind this patent. We use this information to verify ownership and prepare your IP for tokenization.
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-foreground mb-2">{currentSection.title}</h1>
+        <p className="text-muted-foreground">
+          {currentSection.description}
         </p>
       </div>
 
-      {/* Form Sections */}
-      <div className="space-y-4">
-        {sections.map((section) => (
-          <FormSection
-            key={section.id}
-            title={section.title}
-            description={section.description}
-            isOpen={openSection === section.id}
-            isComplete={completedSections.includes(section.id)}
-            progress={getProgressStatus(section.id)}
-            onToggle={() => handleSectionToggle(section.id)}
-          >
-            {renderSectionContent(section.id)}
-          </FormSection>
-        ))}
+      {/* Current Section Content */}
+      <div className="bg-card rounded-lg border-2 border-primary/20 p-6 shadow-card mb-6 animate-in fade-in-50 slide-in-from-bottom-4 duration-500">
+        {renderSectionContent(currentSection.id)}
       </div>
 
-      {/* Submit Button (always visible) */}
-      <div className="flex justify-end mt-6">
-        <Button 
-          onClick={handleSubmit}
-          className="bg-primary hover:bg-primary/90 px-8"
-          disabled={completedSections.length < sections.length - 1}
-        >
-          Submit
-        </Button>
+      {/* Navigation Buttons */}
+      <div className="flex items-center justify-between pt-6">
+        {!isFirstSection ? (
+          <Button
+            variant="outline"
+            onClick={handlePrevious}
+            className="gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Previous
+          </Button>
+        ) : (
+          <div /> // Spacer to maintain justify-between layout
+        )}
+        
+        {!isLastSection && (
+          <Button
+            onClick={() => handleContinue(currentSection.id)}
+            className="gap-2"
+            disabled={!isCurrentSectionValid}
+          >
+            Next
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        )}
       </div>
     </div>
   );

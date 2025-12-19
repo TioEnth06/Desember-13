@@ -6,6 +6,7 @@ import { ArrowRight, DollarSign, Info } from "lucide-react";
 
 interface ValuationSectionProps {
   onContinue: () => void;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
 const valuationBases = [
@@ -18,7 +19,19 @@ const valuationBases = [
   "Self-Assessment"
 ];
 
-export function ValuationSection({ onContinue }: ValuationSectionProps) {
+export function ValuationSection({ onContinue, onValidationChange }: ValuationSectionProps) {
+  const [proposedValuation, setProposedValuation] = React.useState("");
+  const [valuationBasis, setValuationBasis] = React.useState("");
+  const [valuationMethodology, setValuationMethodology] = React.useState("");
+
+  const isValid = proposedValuation !== "" && 
+                  valuationBasis !== "" && 
+                  valuationMethodology.length >= 10;
+
+  React.useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
+
   return (
     <div className="space-y-6">
       {/* Proposed Valuation */}
@@ -79,12 +92,6 @@ export function ValuationSection({ onContinue }: ValuationSectionProps) {
         </p>
       </div>
 
-      <div className="flex justify-end pt-4">
-        <Button onClick={onContinue} className="gap-2">
-          Continue
-          <ArrowRight className="w-4 h-4" />
-        </Button>
-      </div>
     </div>
   );
 }

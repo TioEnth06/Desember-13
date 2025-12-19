@@ -163,17 +163,28 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
                   "gap-2 bg-primary text-primary-foreground hover:bg-primary/90",
                   isTablet ? "h-9 w-9" : "hidden lg:flex"
                 )}
+                asChild
               >
-                <Plus className="w-5 h-5" />
-                {isDesktop && <span>New Vault</span>}
+                <Link to="/vault/tokenize">
+                  <Plus className="w-5 h-5" />
+                  {isDesktop && <span>New Vault</span>}
+                </Link>
               </Button>
             </>
           )}
 
           {/* Notifications - Always visible */}
-          <button className="p-1.5 sm:p-2 rounded-lg hover:bg-muted transition-colors">
-            <Bell className="w-5 h-5 text-muted-foreground" />
-          </button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="p-1.5 sm:p-2 rounded-lg hover:bg-muted transition-colors relative"
+            asChild
+          >
+            <Link to="/notifications">
+              <Bell className="w-5 h-5 text-muted-foreground" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
+            </Link>
+          </Button>
 
           {/* User Avatar - Show on tablet and desktop */}
           {!isMobile && (
@@ -262,9 +273,18 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
                         Connect Wallet
                       </Link>
                     </Button>
-                    <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 justify-start">
-                      <Plus className="w-4 h-4" />
-                      New Vault
+                    <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 justify-start" asChild>
+                      <Link to="/vault/tokenize" onClick={() => setMobileMenuOpen(false)}>
+                        <Plus className="w-4 h-4" />
+                        New Vault
+                      </Link>
+                    </Button>
+                    <Button variant="outline" className="w-full gap-2 justify-start" asChild>
+                      <Link to="/notifications" onClick={() => setMobileMenuOpen(false)}>
+                        <Bell className="w-4 h-4" />
+                        Notifications
+                        <span className="ml-auto w-2 h-2 bg-destructive rounded-full" />
+                      </Link>
                     </Button>
                   </div>
 

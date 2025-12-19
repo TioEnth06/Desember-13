@@ -1,3 +1,4 @@
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -16,35 +17,136 @@ import {
 
 interface InventorSectionProps {
   onContinue: () => void;
+  onValidationChange?: (isValid: boolean) => void;
+  initialData?: Partial<InventorFormData>;
+  onDataChange?: (data: InventorFormData) => void;
 }
 
 const countries = [
-  "United States", "United Kingdom", "Germany", "France", "Japan", 
-  "China", "India", "Canada", "Australia", "Singapore", "South Korea",
-  "Netherlands", "Switzerland", "Sweden", "Brazil"
+  { name: "United States", flag: "🇺🇸" },
+  { name: "United Kingdom", flag: "🇬🇧" },
+  { name: "Germany", flag: "🇩🇪" },
+  { name: "France", flag: "🇫🇷" },
+  { name: "Japan", flag: "🇯🇵" },
+  { name: "China", flag: "🇨🇳" },
+  { name: "India", flag: "🇮🇳" },
+  { name: "Canada", flag: "🇨🇦" },
+  { name: "Australia", flag: "🇦🇺" },
+  { name: "Singapore", flag: "🇸🇬" },
+  { name: "South Korea", flag: "🇰🇷" },
+  { name: "Netherlands", flag: "🇳🇱" },
+  { name: "Switzerland", flag: "🇨🇭" },
+  { name: "Sweden", flag: "🇸🇪" },
+  { name: "Brazil", flag: "🇧🇷" },
+  { name: "Italy", flag: "🇮🇹" },
+  { name: "Spain", flag: "🇪🇸" },
+  { name: "Russia", flag: "🇷🇺" },
+  { name: "Mexico", flag: "🇲🇽" },
+  { name: "Argentina", flag: "🇦🇷" },
+  { name: "South Africa", flag: "🇿🇦" },
+  { name: "Egypt", flag: "🇪🇬" },
+  { name: "Nigeria", flag: "🇳🇬" },
+  { name: "Kenya", flag: "🇰🇪" },
+  { name: "Saudi Arabia", flag: "🇸🇦" },
+  { name: "United Arab Emirates", flag: "🇦🇪" },
+  { name: "Israel", flag: "🇮🇱" },
+  { name: "Turkey", flag: "🇹🇷" },
+  { name: "Indonesia", flag: "🇮🇩" },
+  { name: "Malaysia", flag: "🇲🇾" },
+  { name: "Thailand", flag: "🇹🇭" },
+  { name: "Philippines", flag: "🇵🇭" },
+  { name: "Vietnam", flag: "🇻🇳" },
+  { name: "New Zealand", flag: "🇳🇿" },
+  { name: "Poland", flag: "🇵🇱" },
+  { name: "Belgium", flag: "🇧🇪" },
+  { name: "Austria", flag: "🇦🇹" },
+  { name: "Norway", flag: "🇳🇴" },
+  { name: "Denmark", flag: "🇩🇰" },
+  { name: "Finland", flag: "🇫🇮" },
+  { name: "Ireland", flag: "🇮🇪" },
+  { name: "Portugal", flag: "🇵🇹" },
+  { name: "Greece", flag: "🇬🇷" },
+  { name: "Czech Republic", flag: "🇨🇿" },
+  { name: "Hungary", flag: "🇭🇺" },
+  { name: "Romania", flag: "🇷🇴" },
+  { name: "Chile", flag: "🇨🇱" },
+  { name: "Colombia", flag: "🇨🇴" },
+  { name: "Peru", flag: "🇵🇪" },
+  { name: "Venezuela", flag: "🇻🇪" },
+  { name: "Pakistan", flag: "🇵🇰" },
+  { name: "Bangladesh", flag: "🇧🇩" },
+  { name: "Sri Lanka", flag: "🇱🇰" },
+  { name: "Myanmar", flag: "🇲🇲" },
+  { name: "Cambodia", flag: "🇰🇭" },
+  { name: "Laos", flag: "🇱🇦" },
+  { name: "Mongolia", flag: "🇲🇳" },
+  { name: "Kazakhstan", flag: "🇰🇿" },
+  { name: "Ukraine", flag: "🇺🇦" },
+  { name: "Belarus", flag: "🇧🇾" },
+  { name: "Croatia", flag: "🇭🇷" },
+  { name: "Serbia", flag: "🇷🇸" },
+  { name: "Bulgaria", flag: "🇧🇬" },
+  { name: "Slovakia", flag: "🇸🇰" },
+  { name: "Slovenia", flag: "🇸🇮" },
+  { name: "Estonia", flag: "🇪🇪" },
+  { name: "Latvia", flag: "🇱🇻" },
+  { name: "Lithuania", flag: "🇱🇹" },
+  { name: "Luxembourg", flag: "🇱🇺" },
+  { name: "Iceland", flag: "🇮🇸" },
+  { name: "Malta", flag: "🇲🇹" },
+  { name: "Cyprus", flag: "🇨🇾" },
 ];
 
 const roles = [
   "Inventor",
-  "Patent Owner",
-  "Research institution",
+  "Founder",
+  "Research Institution",
   "Company"
 ];
 
-export function InventorSection({ onContinue }: InventorSectionProps) {
+export function InventorSection({ onContinue, onValidationChange, initialData, onDataChange }: InventorSectionProps) {
   const form = useForm<InventorFormData>({
     resolver: zodResolver(inventorSchema),
     mode: "onChange", // Validate in real-time as user types
     reValidateMode: "onChange", // Re-validate on change after first validation
     defaultValues: {
-      fullName: "",
-      role: "",
-      email: "",
-      phone: "",
-      country: "",
-      website: "",
+      fullName: initialData?.fullName || "",
+      role: initialData?.role || "",
+      email: initialData?.email || "",
+      phone: initialData?.phone || "",
+      country: initialData?.country || "",
+      website: initialData?.website || "",
     },
   });
+
+  const { isValid } = form.formState;
+
+  // Update form when initialData changes
+  React.useEffect(() => {
+    if (initialData) {
+      form.reset({
+        fullName: initialData.fullName || "",
+        role: initialData.role || "",
+        email: initialData.email || "",
+        phone: initialData.phone || "",
+        country: initialData.country || "",
+        website: initialData.website || "",
+      });
+    }
+  }, [initialData, form]);
+
+  // Report validation state to parent
+  React.useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
+
+  // Save form data on change
+  React.useEffect(() => {
+    const subscription = form.watch((data) => {
+      onDataChange?.(data as InventorFormData);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, onDataChange]);
 
   const onSubmit = (data: InventorFormData) => {
     console.log("Form data:", data);
@@ -149,23 +251,26 @@ export function InventorSection({ onContinue }: InventorSectionProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel className="form-label form-label-required">Country of Origin</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Country" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
-                  {countries.map((country) => (
-                    <SelectItem key={country} value={country.toLowerCase().replace(/\s/g, '-')}>
-                      {country}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
+                  <SelectContent>
+                    {countries.map((country) => (
+                      <SelectItem key={country.name} value={country.name.toLowerCase().replace(/\s/g, '-')}>
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">{country.flag}</span>
+                          <span>{country.name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
         />
 
         {/* Website */}
@@ -187,7 +292,7 @@ export function InventorSection({ onContinue }: InventorSectionProps) {
         />
 
         {/* Privacy Note */}
-        <div className="rounded-lg border border-blue-500/30 bg-blue-50 dark:bg-blue-900/20 p-4 flex items-start gap-3">
+        <div className="rounded-lg border border-blue-500/30 bg-blue-50 dark:bg-blue-900/20 p-6 flex items-center gap-3 min-h-[80px]">
           <div className="flex-shrink-0 mt-0.5">
             <Info className="w-5 h-5 text-blue-600 dark:text-blue-500" />
           </div>
@@ -196,13 +301,6 @@ export function InventorSection({ onContinue }: InventorSectionProps) {
           </p>
         </div>
 
-        {/* Continue Button */}
-        <div className="flex justify-end pt-4">
-          <Button type="submit" className="gap-2">
-            Continue
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </div>
       </form>
     </Form>
   );

@@ -5,6 +5,7 @@ import { useState } from "react";
 
 interface OwnershipSectionProps {
   onContinue: () => void;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
 interface CoOwner {
@@ -13,8 +14,15 @@ interface CoOwner {
   percentage: string;
 }
 
-export function OwnershipSection({ onContinue }: OwnershipSectionProps) {
+export function OwnershipSection({ onContinue, onValidationChange }: OwnershipSectionProps) {
   const [coOwners, setCoOwners] = useState<CoOwner[]>([]);
+  const [ownershipPercentage, setOwnershipPercentage] = useState("");
+
+  const isValid = ownershipPercentage !== "" && ownershipPercentage !== "0";
+
+  React.useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
 
   const addCoOwner = () => {
     setCoOwners([...coOwners, { id: Date.now().toString(), name: '', percentage: '' }]);
@@ -121,12 +129,6 @@ export function OwnershipSection({ onContinue }: OwnershipSectionProps) {
         </p>
       </div>
 
-      <div className="flex justify-end pt-4">
-        <Button onClick={onContinue} className="gap-2">
-          Continue
-          <ArrowRight className="w-4 h-4" />
-        </Button>
-      </div>
     </div>
   );
 }

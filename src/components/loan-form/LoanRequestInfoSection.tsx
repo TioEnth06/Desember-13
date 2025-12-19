@@ -36,10 +36,16 @@ const loanDurations = [
 ];
 
 const interestModels = [
-  "Fixed Rate",
-  "Variable Rate",
-  "Fixed-to-Variable",
-  "Interest-Only Period"
+  "Fixed APR",
+  "Revenue-sharing APR",
+  "Dynamic Oracle APR"
+];
+
+const loanPurposes = [
+  "R&D Funding",
+  "Commercialization Funding",
+  "Prototype Development",
+  "Expansion/Operational Funding"
 ];
 
 export function LoanRequestInfoSection({ onContinue }: LoanRequestInfoSectionProps) {
@@ -180,13 +186,20 @@ export function LoanRequestInfoSection({ onContinue }: LoanRequestInfoSectionPro
           render={({ field }) => (
             <FormItem>
               <FormLabel className="form-label form-label-required">Purpose of Loan</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder="Describe the purpose and intended use of the loan funds..."
-                  className="min-h-[100px]"
-                  {...field}
-                />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Purpose" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {loanPurposes.map((purpose) => (
+                    <SelectItem key={purpose} value={purpose.toLowerCase().replace(/\s/g, '-').replace(/\//g, '-')}>
+                      {purpose}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

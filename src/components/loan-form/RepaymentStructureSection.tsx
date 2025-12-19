@@ -28,11 +28,10 @@ const repaymentMethods = [
 ];
 
 const repaymentSources = [
-  "Operating Revenue",
-  "Patent Licensing Income",
-  "Investment Proceeds",
-  "Equity Financing",
-  "Other Revenue Stream"
+  "Licensing Revenue",
+  "Royalty Income",
+  "Cashflow from company",
+  "External R&D Funding"
 ];
 
 export function RepaymentStructureSection({ onContinue }: RepaymentStructureSectionProps) {

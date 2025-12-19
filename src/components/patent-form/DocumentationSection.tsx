@@ -4,6 +4,7 @@ import { ArrowRight, Upload, FileText, Image, BarChart3, Info } from "lucide-rea
 
 interface DocumentationSectionProps {
   onContinue: () => void;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
 interface FileUploadProps {
@@ -46,7 +47,20 @@ const trlLevels = [
   { value: "commercialized", label: "Commercialized" },
 ];
 
-export function DocumentationSection({ onContinue }: DocumentationSectionProps) {
+export function DocumentationSection({ onContinue, onValidationChange }: DocumentationSectionProps) {
+  const [trlLevel, setTrlLevel] = React.useState("");
+  const [files, setFiles] = React.useState({
+    patentDescription: null as File | null,
+    technicalSpecification: null as File | null,
+  });
+
+  // Validate: TRL level is required, files are optional but recommended
+  const isValid = trlLevel !== "";
+
+  React.useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
+
   return (
     <div className="space-y-6">
       <FileUpload 
@@ -80,7 +94,7 @@ export function DocumentationSection({ onContinue }: DocumentationSectionProps) 
       {/* TRL Level */}
       <div>
         <label className="form-label form-label-required">TRL (Technology Readiness Level)</label>
-        <Select>
+        <Select onValueChange={setTrlLevel} value={trlLevel}>
           <SelectTrigger>
             <SelectValue placeholder="Select TRL Level" />
           </SelectTrigger>
@@ -104,12 +118,6 @@ export function DocumentationSection({ onContinue }: DocumentationSectionProps) 
         </p>
       </div>
 
-      <div className="flex justify-end pt-4">
-        <Button onClick={onContinue} className="gap-2">
-          Continue
-          <ArrowRight className="w-4 h-4" />
-        </Button>
-      </div>
     </div>
   );
 }

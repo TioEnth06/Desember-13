@@ -28,14 +28,25 @@ export function WalletsSection() {
       {/* NanoFi Generated Wallet */}
       <div className="bg-card rounded-xl border border-border p-4 sm:p-6">
         <h3 className="text-lg font-semibold text-foreground mb-4">NanoFi Generated Wallet</h3>
-        <div className="space-y-4">
+        <div className="space-y-4 p-4 border border-border rounded-lg">
           <div className="flex items-center justify-between py-2 border-b border-border">
             <span className="text-sm text-muted-foreground">Wallet Type</span>
             <span className="text-sm font-medium text-foreground">NanoFi Generated Wallet</span>
           </div>
           <div className="flex items-center justify-between py-2 border-b border-border">
             <span className="text-sm text-muted-foreground">Network</span>
-            <span className="text-sm font-medium text-foreground">Solana</span>
+            <div className="flex items-center gap-2">
+              <svg width="20" height="20" viewBox="0 0 397.7 311.7" className="w-5 h-5">
+                <linearGradient id="solana-gradient" x1="360.879" y1="351.455" x2="141.853" y2="69.294" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stopColor="#00FFA3" />
+                  <stop offset="1" stopColor="#DC1FFF" />
+                </linearGradient>
+                <path d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z" fill="url(#solana-gradient)" />
+                <path d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z" fill="url(#solana-gradient)" />
+                <path d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z" fill="url(#solana-gradient)" />
+              </svg>
+              <span className="text-sm font-medium text-foreground">Solana</span>
+            </div>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-2 border-b border-border">
             <span className="text-sm text-muted-foreground">Address</span>
@@ -62,7 +73,7 @@ export function WalletsSection() {
             </Badge>
           </div>
         </div>
-        <div className="flex flex-wrap gap-3 mt-6">
+        <div className="flex flex-wrap gap-3 mt-6 justify-end">
           <Button variant="outline" size="sm" className="gap-2">
             <Copy className="w-4 h-4" />
             Copy Address

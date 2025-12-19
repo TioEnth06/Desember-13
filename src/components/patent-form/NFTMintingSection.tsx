@@ -8,10 +8,21 @@ import { useState } from "react";
 
 interface NFTMintingSectionProps {
   onContinue: () => void;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
-export function NFTMintingSection({ onContinue }: NFTMintingSectionProps) {
+export function NFTMintingSection({ onContinue, onValidationChange }: NFTMintingSectionProps) {
   const [isFractionalizationEnabled, setIsFractionalizationEnabled] = useState(false);
+  const [tokenName, setTokenName] = useState("");
+  const [tokenSymbol, setTokenSymbol] = useState("");
+
+  const isValid = tokenName !== "" && 
+                  tokenSymbol !== "" && 
+                  tokenSymbol.length <= 10;
+
+  React.useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
 
   return (
     <div className="space-y-6">
@@ -87,12 +98,6 @@ export function NFTMintingSection({ onContinue }: NFTMintingSectionProps) {
         </p>
       </div>
 
-      <div className="flex justify-end pt-4">
-        <Button onClick={onContinue} className="gap-2">
-          Continue
-          <ArrowRight className="w-4 h-4" />
-        </Button>
-      </div>
     </div>
   );
 }

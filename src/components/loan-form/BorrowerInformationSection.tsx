@@ -19,16 +19,85 @@ interface BorrowerInformationSectionProps {
 }
 
 const countries = [
-  "United States", "United Kingdom", "Germany", "France", "Japan", 
-  "China", "India", "Canada", "Australia", "Singapore", "South Korea",
-  "Netherlands", "Switzerland", "Sweden", "Brazil"
+  { name: "United States", flag: "🇺🇸" },
+  { name: "United Kingdom", flag: "🇬🇧" },
+  { name: "Germany", flag: "🇩🇪" },
+  { name: "France", flag: "🇫🇷" },
+  { name: "Japan", flag: "🇯🇵" },
+  { name: "China", flag: "🇨🇳" },
+  { name: "India", flag: "🇮🇳" },
+  { name: "Canada", flag: "🇨🇦" },
+  { name: "Australia", flag: "🇦🇺" },
+  { name: "Singapore", flag: "🇸🇬" },
+  { name: "South Korea", flag: "🇰🇷" },
+  { name: "Netherlands", flag: "🇳🇱" },
+  { name: "Switzerland", flag: "🇨🇭" },
+  { name: "Sweden", flag: "🇸🇪" },
+  { name: "Brazil", flag: "🇧🇷" },
+  { name: "Italy", flag: "🇮🇹" },
+  { name: "Spain", flag: "🇪🇸" },
+  { name: "Russia", flag: "🇷🇺" },
+  { name: "Mexico", flag: "🇲🇽" },
+  { name: "Argentina", flag: "🇦🇷" },
+  { name: "South Africa", flag: "🇿🇦" },
+  { name: "Egypt", flag: "🇪🇬" },
+  { name: "Nigeria", flag: "🇳🇬" },
+  { name: "Kenya", flag: "🇰🇪" },
+  { name: "Saudi Arabia", flag: "🇸🇦" },
+  { name: "United Arab Emirates", flag: "🇦🇪" },
+  { name: "Israel", flag: "🇮🇱" },
+  { name: "Turkey", flag: "🇹🇷" },
+  { name: "Indonesia", flag: "🇮🇩" },
+  { name: "Malaysia", flag: "🇲🇾" },
+  { name: "Thailand", flag: "🇹🇭" },
+  { name: "Philippines", flag: "🇵🇭" },
+  { name: "Vietnam", flag: "🇻🇳" },
+  { name: "New Zealand", flag: "🇳🇿" },
+  { name: "Poland", flag: "🇵🇱" },
+  { name: "Belgium", flag: "🇧🇪" },
+  { name: "Austria", flag: "🇦🇹" },
+  { name: "Norway", flag: "🇳🇴" },
+  { name: "Denmark", flag: "🇩🇰" },
+  { name: "Finland", flag: "🇫🇮" },
+  { name: "Ireland", flag: "🇮🇪" },
+  { name: "Portugal", flag: "🇵🇹" },
+  { name: "Greece", flag: "🇬🇷" },
+  { name: "Czech Republic", flag: "🇨🇿" },
+  { name: "Hungary", flag: "🇭🇺" },
+  { name: "Romania", flag: "🇷🇴" },
+  { name: "Chile", flag: "🇨🇱" },
+  { name: "Colombia", flag: "🇨🇴" },
+  { name: "Peru", flag: "🇵🇪" },
+  { name: "Venezuela", flag: "🇻🇪" },
+  { name: "Pakistan", flag: "🇵🇰" },
+  { name: "Bangladesh", flag: "🇧🇩" },
+  { name: "Sri Lanka", flag: "🇱🇰" },
+  { name: "Myanmar", flag: "🇲🇲" },
+  { name: "Cambodia", flag: "🇰🇭" },
+  { name: "Laos", flag: "🇱🇦" },
+  { name: "Mongolia", flag: "🇲🇳" },
+  { name: "Kazakhstan", flag: "🇰🇿" },
+  { name: "Ukraine", flag: "🇺🇦" },
+  { name: "Belarus", flag: "🇧🇾" },
+  { name: "Croatia", flag: "🇭🇷" },
+  { name: "Serbia", flag: "🇷🇸" },
+  { name: "Bulgaria", flag: "🇧🇬" },
+  { name: "Slovakia", flag: "🇸🇰" },
+  { name: "Slovenia", flag: "🇸🇮" },
+  { name: "Estonia", flag: "🇪🇪" },
+  { name: "Latvia", flag: "🇱🇻" },
+  { name: "Lithuania", flag: "🇱🇹" },
+  { name: "Luxembourg", flag: "🇱🇺" },
+  { name: "Iceland", flag: "🇮🇸" },
+  { name: "Malta", flag: "🇲🇹" },
+  { name: "Cyprus", flag: "🇨🇾" },
 ];
 
 const roles = [
-  "Individual Borrower",
-  "Company/Organization",
+  "Inventor",
+  "Founder",
   "Research Institution",
-  "Patent Owner"
+  "Company"
 ];
 
 export function BorrowerInformationSection({ onContinue }: BorrowerInformationSectionProps) {
@@ -147,23 +216,26 @@ export function BorrowerInformationSection({ onContinue }: BorrowerInformationSe
           render={({ field }) => (
             <FormItem>
               <FormLabel className="form-label form-label-required">Country/Jurisdiction</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Country/Jurisdiction" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
-                  {countries.map((country) => (
-                    <SelectItem key={country} value={country.toLowerCase().replace(/\s/g, '-')}>
-                      {country}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
+                  <SelectContent>
+                    {countries.map((country) => (
+                      <SelectItem key={country.name} value={country.name.toLowerCase().replace(/\s/g, '-')}>
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">{country.flag}</span>
+                          <span>{country.name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
         />
 
         {/* Continue Button */}

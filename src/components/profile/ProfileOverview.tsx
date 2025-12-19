@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -39,7 +40,9 @@ export function ProfileOverview() {
 
         <div className="flex flex-col sm:flex-row gap-3">
           <Button className="flex-1">Verify Identity</Button>
-          <Button variant="outline" className="flex-1">Edit Profile</Button>
+          <Button variant="outline" className="flex-1" asChild>
+            <Link to="/profile/edit">Edit Profile</Link>
+          </Button>
         </div>
       </div>
 

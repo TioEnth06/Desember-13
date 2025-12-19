@@ -14,6 +14,8 @@ import TokenizePatent from "./pages/TokenizePatent";
 import RequestLoan from "./pages/RequestLoan";
 import Launchpad from "./pages/Launchpad";
 import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
+import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +38,8 @@ const App = () => (
             <Route path="/staking" element={<Staking />} />
             <Route path="/launchpad" element={<Launchpad />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/edit" element={<EditProfile />} />
+            <Route path="/notifications" element={<Notifications />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

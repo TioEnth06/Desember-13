@@ -1,3 +1,5 @@
+import React from "react";
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -6,6 +8,7 @@ import { ArrowRight, Info } from "lucide-react";
 
 interface CommercialValueSectionProps {
   onContinue: () => void;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
 const commercializationStages = [
@@ -32,13 +35,27 @@ const industries = [
   "Telecommunications"
 ];
 
-export function CommercialValueSection({ onContinue }: CommercialValueSectionProps) {
+export function CommercialValueSection({ onContinue, onValidationChange }: CommercialValueSectionProps) {
+  const [commercializationStage, setCommercializationStage] = React.useState("");
+  const [targetIndustry, setTargetIndustry] = React.useState("");
+  const [marketSize, setMarketSize] = React.useState("");
+  const [competitiveAdvantage, setCompetitiveAdvantage] = React.useState("");
+
+  const isValid = commercializationStage !== "" && 
+                  targetIndustry !== "" && 
+                  marketSize !== "" && 
+                  competitiveAdvantage.length >= 10;
+
+  React.useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
+
   return (
     <div className="space-y-6">
       {/* Commercialization Stage */}
       <div>
         <label className="form-label form-label-required">Current Stage of Commercialization</label>
-        <Select>
+        <Select onValueChange={setCommercializationStage} value={commercializationStage}>
           <SelectTrigger>
             <SelectValue placeholder="Select Stage" />
           </SelectTrigger>
@@ -55,7 +72,7 @@ export function CommercialValueSection({ onContinue }: CommercialValueSectionPro
       {/* Target Industry */}
       <div>
         <label className="form-label form-label-required">Target Industry</label>
-        <Select>
+        <Select onValueChange={setTargetIndustry} value={targetIndustry}>
           <SelectTrigger>
             <SelectValue placeholder="Select Industry" />
           </SelectTrigger>
@@ -69,21 +86,24 @@ export function CommercialValueSection({ onContinue }: CommercialValueSectionPro
         </Select>
       </div>
 
-      {/* Potential Use Cases */}
+      {/* Market Size */}
       <div>
-        <label className="form-label form-label-required">Potential Use Cases</label>
-        <Textarea 
-          placeholder="Describe the potential applications and use cases for this patent..."
-          className="min-h-[100px]"
+        <label className="form-label form-label-required">Market Size</label>
+        <Input 
+          placeholder="e.g., $50M - $100M annually"
+          value={marketSize}
+          onChange={(e) => setMarketSize(e.target.value)}
         />
       </div>
 
-      {/* Comparable Market Solutions */}
+      {/* Competitive Advantage */}
       <div>
-        <label className="form-label form-label-required">Comparable Market Solutions</label>
+        <label className="form-label form-label-required">Competitive Advantage</label>
         <Textarea 
-          placeholder="List existing similar solutions in the market and how your patent differs..."
+          placeholder="Describe your patent's competitive advantage..."
           className="min-h-[100px]"
+          value={competitiveAdvantage}
+          onChange={(e) => setCompetitiveAdvantage(e.target.value)}
         />
       </div>
 
@@ -106,12 +126,6 @@ export function CommercialValueSection({ onContinue }: CommercialValueSectionPro
         </p>
       </div>
 
-      <div className="flex justify-end pt-4">
-        <Button onClick={onContinue} className="gap-2">
-          Continue
-          <ArrowRight className="w-4 h-4" />
-        </Button>
-      </div>
     </div>
   );
 }

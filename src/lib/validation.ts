@@ -172,3 +172,64 @@ export const termsSchema = z.object({
 
 export type TermsFormData = z.infer<typeof termsSchema>;
 
+// Patent Vault Form validation schemas
+export const patentDetailsSchema = z.object({
+  patentTitle: z.string().min(1, "Patent title is required"),
+  category: z.string().min(1, "Patent category is required"),
+  registrationNumber: z.string().min(1, "Patent registration number is required"),
+  filingDate: z.string().min(1, "Filing date is required"),
+  jurisdiction: z.string().min(1, "Jurisdiction is required"),
+  abstract: z.string().min(10, "Patent abstract must be at least 10 characters").max(1000, "Patent abstract must not exceed 1000 characters"),
+  keywords: z.string().min(1, "Keywords are required"),
+});
+
+export type PatentDetailsFormData = z.infer<typeof patentDetailsSchema>;
+
+export const documentationSchema = z.object({
+  patentDescription: z.any().refine((val) => val !== null && val !== undefined, {
+    message: "Patent Description is required"
+  }),
+  technicalSpecification: z.any().refine((val) => val !== null && val !== undefined, {
+    message: "Technical Specification Document is required"
+  }),
+  trlLevel: z.string().min(1, "TRL Level is required"),
+});
+
+export type DocumentationFormData = z.infer<typeof documentationSchema>;
+
+export const commercialValueSchema = z.object({
+  commercializationStage: z.string().min(1, "Commercialization stage is required"),
+  targetIndustry: z.string().min(1, "Target industry is required"),
+  marketSize: z.string().min(1, "Market size is required"),
+  competitiveAdvantage: z.string().min(10, "Competitive advantage must be at least 10 characters"),
+});
+
+export type CommercialValueFormData = z.infer<typeof commercialValueSchema>;
+
+export const ownershipSchema = z.object({
+  ownershipPercentage: z.string().min(1, "Ownership percentage is required"),
+  coOwners: z.array(z.object({
+    name: z.string().min(1, "Co-owner name is required"),
+    percentage: z.string().min(1, "Percentage is required"),
+  })).optional(),
+});
+
+export type OwnershipFormData = z.infer<typeof ownershipSchema>;
+
+export const valuationSchema = z.object({
+  proposedValuation: z.string().min(1, "Proposed valuation is required"),
+  valuationBasis: z.string().min(1, "Valuation basis is required"),
+  valuationMethodology: z.string().min(10, "Valuation methodology must be at least 10 characters"),
+});
+
+export type ValuationFormData = z.infer<typeof valuationSchema>;
+
+export const nftMintingSchema = z.object({
+  tokenName: z.string().min(1, "Token name is required"),
+  tokenSymbol: z.string().min(1, "Token symbol is required").max(10, "Token symbol must not exceed 10 characters"),
+  fractionalizationEnabled: z.boolean(),
+  totalSupply: z.string().optional(),
+});
+
+export type NFTMintingFormData = z.infer<typeof nftMintingSchema>;
+

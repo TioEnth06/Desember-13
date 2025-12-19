@@ -37,7 +37,7 @@ export function MyIPNFTsSection() {
       <div className="grid grid-cols-1 gap-4">
         {ipNFTs.map((nft) => (
           <div key={nft.id} className="bg-card rounded-xl border border-border p-4 sm:p-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex flex-col gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <h3 className="text-lg font-semibold text-foreground">{nft.title}</h3>
@@ -48,7 +48,7 @@ export function MyIPNFTsSection() {
                     {nft.status}
                   </Badge>
                 </div>
-                <div className="space-y-2 text-sm">
+                <div className="space-y-2 text-sm p-4 border border-border rounded-lg">
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Token ID</span>
                     <span className="font-mono text-foreground">{nft.id}</span>
@@ -63,7 +63,7 @@ export function MyIPNFTsSection() {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex flex-col sm:flex-row gap-2 sm:justify-end">
                 <Button variant="outline" size="sm" className="gap-2">
                   <Eye className="w-4 h-4" />
                   View
