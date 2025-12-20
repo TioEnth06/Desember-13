@@ -71,8 +71,9 @@ export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
 
   const handleContinue = (currentSectionId: SectionId) => {
     // Check if current section is valid
-    const isValid = sectionValidation[currentSectionId];
-    if (!isValid) {
+    // Only block if validation is explicitly false
+    const validationState = sectionValidation[currentSectionId];
+    if (validationState === false) {
       toast({
         title: "Please complete all required fields",
         description: "All required fields must be filled before proceeding.",
@@ -170,7 +171,12 @@ export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
   // Check if current section is valid
   // For sections with forms (like inventor), use their reported validation state
   // For sections without forms, they report as valid by default (can be enhanced later)
-  const isCurrentSectionValid = sectionValidation[currentSection.id] ?? false;
+  // Only disable if validation is explicitly false, otherwise allow navigation
+  // This allows users to navigate even if validation hasn't been set yet
+  const validationState = sectionValidation[currentSection.id];
+  // Allow navigation if validation is not explicitly false
+  // This means undefined or true will allow navigation
+  const isCurrentSectionValid = validationState !== false;
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -274,7 +280,8 @@ export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
           <Button
             onClick={() => handleContinue(currentSection.id)}
             className="gap-2"
-            disabled={!isCurrentSectionValid}
+            disabled={false}
+            title="Click to continue to next step"
           >
             Next
             <ArrowRight className="w-4 h-4" />

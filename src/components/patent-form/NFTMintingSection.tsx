@@ -1,10 +1,10 @@
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Info } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
 
 interface NFTMintingSectionProps {
   onContinue: () => void;
@@ -29,14 +29,23 @@ export function NFTMintingSection({ onContinue, onValidationChange }: NFTMinting
       {/* NFT Name */}
       <div>
         <label className="form-label form-label-required">IP-NFT Name</label>
-        <Input placeholder="Enter a unique name for your IP-NFT" />
+        <Input 
+          placeholder="Enter a unique name for your IP-NFT"
+          value={tokenName}
+          onChange={(e) => setTokenName(e.target.value)}
+        />
         <p className="form-hint">This name will be displayed on marketplaces and wallets</p>
       </div>
 
       {/* NFT Symbol */}
       <div>
         <label className="form-label form-label-required">IP-NFT Symbol</label>
-        <Input placeholder="e.g., IPNFT" maxLength={10} />
+        <Input 
+          placeholder="e.g., IPNFT" 
+          maxLength={10}
+          value={tokenSymbol}
+          onChange={(e) => setTokenSymbol(e.target.value.toUpperCase())}
+        />
         <p className="form-hint">Short ticker symbol (max 10 characters, uppercase recommended)</p>
       </div>
 

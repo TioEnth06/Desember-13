@@ -1,3 +1,4 @@
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -39,7 +40,15 @@ export function ValuationSection({ onContinue, onValidationChange }: ValuationSe
         <label className="form-label form-label-required">Proposed Valuation (USD)</label>
         <div className="relative">
           <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="0.00" type="number" min="0" step="0.01" className="pl-9" />
+          <Input 
+            placeholder="0.00" 
+            type="number" 
+            min="0" 
+            step="0.01" 
+            className="pl-9"
+            value={proposedValuation}
+            onChange={(e) => setProposedValuation(e.target.value)}
+          />
         </div>
         <p className="form-hint">Enter the total valuation amount in US Dollars</p>
       </div>
@@ -47,7 +56,7 @@ export function ValuationSection({ onContinue, onValidationChange }: ValuationSe
       {/* Valuation Basis */}
       <div>
         <label className="form-label form-label-required">Valuation Basis</label>
-        <Select>
+        <Select onValueChange={setValuationBasis} value={valuationBasis}>
           <SelectTrigger>
             <SelectValue placeholder="Select Valuation Method" />
           </SelectTrigger>
@@ -67,6 +76,8 @@ export function ValuationSection({ onContinue, onValidationChange }: ValuationSe
         <Textarea 
           placeholder="Provide detailed justification for your proposed valuation, including methodology, comparable transactions, market analysis, or expert opinions..."
           className="min-h-[120px]"
+          value={valuationMethodology}
+          onChange={(e) => setValuationMethodology(e.target.value)}
         />
       </div>
 

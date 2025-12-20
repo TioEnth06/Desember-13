@@ -1,7 +1,7 @@
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Upload, FileText, Plus, Trash2, Info } from "lucide-react";
-import { useState } from "react";
 
 interface OwnershipSectionProps {
   onContinue: () => void;
@@ -114,7 +114,15 @@ export function OwnershipSection({ onContinue, onValidationChange }: OwnershipSe
       <div>
         <label className="form-label form-label-required">Your Percentage Ownership</label>
         <div className="relative">
-          <Input placeholder="100" type="number" min="0" max="100" className="pr-8" />
+          <Input 
+            placeholder="100" 
+            type="number" 
+            min="0" 
+            max="100" 
+            className="pr-8"
+            value={ownershipPercentage}
+            onChange={(e) => setOwnershipPercentage(e.target.value)}
+          />
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
         </div>
       </div>
