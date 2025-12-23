@@ -1,6 +1,11 @@
 import { Search, SlidersHorizontal, TrendingUp, CheckCircle, Clock, XCircle, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 type PatentStatus = "minted" | "approved" | "pending" | "rejected";
 
@@ -43,8 +48,56 @@ const StatusBadge = ({ status }: { status: PatentStatus }) => {
 };
 
 export const PatentTable = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tbodyRef = useRef<HTMLTableSectionElement>(null);
+
+  useEffect(() => {
+    const rows = tbodyRef.current?.children;
+    if (!rows) return;
+
+    const ctx = gsap.context(() => {
+      // Animate container
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+            once: true,
+          },
+        }
+      );
+
+      // Stagger animate rows
+      gsap.fromTo(
+        Array.from(rows),
+        { opacity: 0, x: -20 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.4,
+          stagger: 0.05,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: tbodyRef.current,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
   return (
-    <div className="stat-card">
+    <div ref={containerRef} className="stat-card">
       {/* Search and Filter */}
       <div className="flex items-center gap-3 mb-6">
         <div className="relative flex-1 max-w-md">
@@ -85,12 +138,11 @@ export const PatentTable = () => {
               <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody ref={tbodyRef}>
             {patents.map((patent, index) => (
               <tr
                 key={index}
-                className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors animate-fade-in"
-                style={{ animationDelay: `${index * 50}ms` }}
+                className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors"
               >
                 <td className="py-4 px-4 text-sm text-muted-foreground">{patent.no}.</td>
                 <td className="py-4 px-4 text-sm font-medium text-foreground">{patent.id}</td>

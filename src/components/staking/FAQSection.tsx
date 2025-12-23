@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Mail, ChevronRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -6,6 +7,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const FAQSection = () => {
   const faqs = [
@@ -41,8 +46,37 @@ const FAQSection = () => {
     },
   ];
 
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        section,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 80%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
   return (
-    <section className="animate-fade-in grid gap-8 lg:grid-cols-2" style={{ animationDelay: "0.3s" }}>
+    <section ref={sectionRef} className="grid gap-8 lg:grid-cols-2">
       {/* Left Side */}
       <div>
         <span className="inline-block rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">

@@ -1,7 +1,61 @@
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function DualVerificationSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const cards = cardsRef.current?.children;
+    if (!cards) return;
+
+    const ctx = gsap.context(() => {
+      // Animate title
+      gsap.fromTo(
+        containerRef.current?.querySelector("h2"),
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+            once: true,
+          },
+        }
+      );
+
+      // Stagger animate cards
+      gsap.fromTo(
+        Array.from(cards),
+        { opacity: 0, y: 30, scale: 0.95 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.5,
+          stagger: 0.2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: cardsRef.current,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
   return (
-    <div className="mb-8 rounded-xl bg-transparent p-0 animate-fade-in">
+    <div ref={containerRef} className="mb-8 rounded-xl bg-transparent p-0">
       <div className="mb-8 text-center">
         <h2 className="text-xl font-semibold text-foreground">Dual Verification System</h2>
         <p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground">
@@ -9,7 +63,7 @@ export function DualVerificationSection() {
         </p>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 mx-auto justify-center items-center">
+      <div ref={cardsRef} className="flex flex-col md:flex-row gap-4 mx-auto justify-center items-center">
         {/* SPV Review Card */}
         <div className="group rounded-xl border border-border bg-white p-4 transition-all duration-300 hover:border-primary/30 hover:shadow-md w-full max-w-full sm:max-w-sm md:w-[400px]">
           <div className="mb-6 flex h-auto min-h-[200px] items-center justify-center rounded-lg overflow-hidden relative p-4" style={{ backgroundColor: '#F4F4F4' }}>

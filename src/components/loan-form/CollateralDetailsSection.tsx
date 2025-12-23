@@ -1,7 +1,7 @@
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Check, Search } from "lucide-react";
+import { Check } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { collateralSchema, type CollateralFormData } from "@/lib/validation";
@@ -16,6 +16,9 @@ import {
 
 interface CollateralDetailsSectionProps {
   onContinue: () => void;
+  onValidationChange?: (isValid: boolean) => void;
+  initialData?: Partial<CollateralFormData>;
+  onDataChange?: (data: CollateralFormData) => void;
 }
 
 // Mock IP-NFTs for selection
@@ -33,19 +36,46 @@ const valuationSources = [
   "Combined Approach"
 ];
 
-export function CollateralDetailsSection({ onContinue }: CollateralDetailsSectionProps) {
+export function CollateralDetailsSection({ onContinue, onValidationChange, initialData, onDataChange }: CollateralDetailsSectionProps) {
   const form = useForm<CollateralFormData>({
     resolver: zodResolver(collateralSchema),
     mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
-      ipNftId: "",
-      patentTitle: "",
-      valuationSource: "",
-      verifiedValue: "",
+      ipNftId: initialData?.ipNftId || "",
+      patentTitle: initialData?.patentTitle || "",
+      valuationSource: initialData?.valuationSource || "",
+      verifiedValue: initialData?.verifiedValue || "",
     },
   });
 
+  const { isValid } = form.formState;
   const selectedNFT = mockIPNFTs.find(nft => nft.id === form.watch("ipNftId"));
+
+  // Update form when initialData changes
+  React.useEffect(() => {
+    if (initialData) {
+      form.reset({
+        ipNftId: initialData.ipNftId || "",
+        patentTitle: initialData.patentTitle || "",
+        valuationSource: initialData.valuationSource || "",
+        verifiedValue: initialData.verifiedValue || "",
+      });
+    }
+  }, [initialData, form]);
+
+  // Report validation state to parent
+  React.useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
+
+  // Save form data on change
+  React.useEffect(() => {
+    const subscription = form.watch((data) => {
+      onDataChange?.(data as CollateralFormData);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, onDataChange]);
 
   const handleNFTSelect = (value: string) => {
     const nft = mockIPNFTs.find(n => n.id === value);
@@ -56,14 +86,9 @@ export function CollateralDetailsSection({ onContinue }: CollateralDetailsSectio
     }
   };
 
-  const onSubmit = (data: CollateralFormData) => {
-    console.log("Collateral data:", data);
-    onContinue();
-  };
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form className="space-y-6">
         {/* Auto-saved Badge */}
         <div className="flex items-center gap-2">
           <span className="auto-saved-badge">
@@ -176,14 +201,6 @@ export function CollateralDetailsSection({ onContinue }: CollateralDetailsSectio
             </FormItem>
           )}
         />
-
-        {/* Continue Button */}
-        <div className="flex justify-end pt-4">
-          <Button type="submit" className="gap-2">
-            Continue
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </div>
       </form>
     </Form>
   );

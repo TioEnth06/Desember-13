@@ -1,6 +1,10 @@
 import { Search, CheckCircle2, Clock, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface Proposal {
   id: number;
@@ -89,6 +93,8 @@ const statusStyles = {
 
 export function ProposalTable() {
   const [searchQuery, setSearchQuery] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tbodyRef = useRef<HTMLTableSectionElement>(null);
 
   const filteredProposals = proposals.filter(
     (proposal) =>
@@ -96,8 +102,53 @@ export function ProposalTable() {
       proposal.subtitle.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  useEffect(() => {
+    const rows = tbodyRef.current?.children;
+    if (!rows) return;
+
+    const ctx = gsap.context(() => {
+      // Animate container
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+            once: true,
+          },
+        }
+      );
+
+      // Stagger animate rows
+      gsap.fromTo(
+        Array.from(rows),
+        { opacity: 0, x: -20 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.4,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: tbodyRef.current,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, [filteredProposals]);
+
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm animate-fade-in" style={{ animationDelay: '100ms' }}>
+    <div ref={containerRef} className="rounded-xl border border-border bg-card shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border p-5">
         <h2 className="text-lg font-semibold text-foreground">Proposal</h2>
@@ -127,7 +178,7 @@ export function ProposalTable() {
               <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">End</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border">
+          <tbody ref={tbodyRef} className="divide-y divide-border">
             {filteredProposals.map((proposal) => {
               const StatusIcon = statusStyles[proposal.status].icon;
               return (

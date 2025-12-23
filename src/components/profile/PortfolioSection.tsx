@@ -1,6 +1,13 @@
+import { useEffect, useRef } from "react";
 import { Wallet, HandCoins, Coins, TrendingUp } from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function PortfolioSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
   const portfolioStats = [
     {
       label: "Total IP-NFT Value",
@@ -24,15 +31,61 @@ export function PortfolioSection() {
     },
   ];
 
+  useEffect(() => {
+    const stats = statsRef.current?.children;
+    if (!stats) return;
+
+    const ctx = gsap.context(() => {
+      // Animate title
+      gsap.fromTo(
+        containerRef.current?.querySelector('h1'),
+        { opacity: 0, y: -20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+
+      // Stagger animate stats
+      gsap.fromTo(
+        Array.from(stats),
+        { opacity: 0, y: 20, scale: 0.95 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: statsRef.current,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
   return (
-    <div className="space-y-6">
+    <div ref={containerRef} className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Portfolio Overview</h1>
         <p className="text-muted-foreground mt-1">View your complete portfolio summary</p>
       </div>
 
       <div className="bg-card rounded-xl border border-border p-4 sm:p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div ref={statsRef} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {portfolioStats.map((stat) => {
             const Icon = stat.icon;
             return (

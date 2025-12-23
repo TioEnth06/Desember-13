@@ -5,8 +5,11 @@ import { DualVerificationSection } from "@/components/governance/DualVerificatio
 import { ProposalTable } from "@/components/governance/ProposalTable";
 import { HowToVote } from "@/components/governance/HowToVote";
 import { CreateProposalInfo } from "@/components/governance/CreateProposalInfo";
+import { YourPatentsSection } from "@/components/governance/YourPatentsSection";
+import { FundingProgressSection } from "@/components/governance/FundingProgressSection";
 import { FileText, Vote, Users, ShieldCheck, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const stats = [
   { icon: FileText, value: "154", label: "Total Proposals" },
@@ -24,40 +27,23 @@ const Governance = () => {
           {/* Hero Section */}
           <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between gap-4">
             <div className="text-center md:text-left">
-              <h1 className="text-2xl font-bold text-foreground">Dao Governance</h1>
+              <h1 className="text-2xl font-bold text-foreground">Commercialization Funding</h1>
               <p className="mt-1 text-muted-foreground">
-                Shape the future of nanotech innovation through decentralized decision-making
+                Dapatkan pendanaan berbasis paten melalui sistem Expert Review Board (ERB)
               </p>
             </div>
-            <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 w-full md:w-auto">
-              <PlusCircle className="h-4 w-4" />
-              Create Proposal
+            <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 w-full md:w-auto font-semibold" asChild>
+              <Link to="/governance/funding-application">
+                Submit Proposal
+              </Link>
             </Button>
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {stats.map((stat, index) => (
-              <StatsCard
-                key={index}
-                icon={stat.icon}
-                value={stat.value}
-                label={stat.label}
-              />
-            ))}
-          </div>
+          {/* Your Patents Section */}
+          <YourPatentsSection />
 
-          {/* Dual Verification System */}
-          <DualVerificationSection />
-
-          {/* Proposal Table */}
-          <ProposalTable />
-
-          {/* How to Vote & Creating Proposals */}
-          <div className="grid gap-6 lg:grid-cols-2">
-            <HowToVote />
-            <CreateProposalInfo />
-          </div>
+          {/* Funding Progress Section */}
+          <FundingProgressSection />
         </div>
       </main>
       <Footer />

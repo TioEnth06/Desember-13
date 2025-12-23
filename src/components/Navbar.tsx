@@ -1,13 +1,12 @@
-import { Search, LayoutDashboard, Wallet, Vote, ShoppingCart, Coins, HandCoins, ChevronDown, Bell, Plus, Menu, X, Sun, Moon } from "lucide-react";
+import { Search, LayoutDashboard, Wallet, Vote, HandCoins, ChevronDown, Bell, Plus, Menu, X, LogOut, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useDevice } from "@/hooks/use-device";
 import { useState } from "react";
-import { useTheme } from "next-themes";
-import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -65,22 +64,30 @@ const NavItem = ({ icon, label, active, hasSubmenu, href = "#", onComingSoon }: 
 };
 
 interface NavbarProps {
-  activePage?: "overview" | "vault" | "lending" | "governance" | "marketplace" | "staking";
+  activePage?: "overview" | "vault" | "lending" | "governance";
 }
 
 export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
   const { isMobile, isTablet, isDesktop } = useDevice();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { isAuthenticated, logout, user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+    setMobileMenuOpen(false);
+  };
 
   const navItems: NavItemWithDialogProps[] = [
     { icon: <LayoutDashboard className="w-4 h-4" />, label: "Overview", active: activePage === "overview", href: "/", hasSubmenu: false, onComingSoon: undefined },
     { icon: <Wallet className="w-4 h-4" />, label: "Vault", active: activePage === "vault", href: "/vault", hasSubmenu: false, onComingSoon: undefined },
     { icon: <HandCoins className="w-4 h-4" />, label: "Lending", active: activePage === "lending", href: "/lending", hasSubmenu: false, onComingSoon: undefined },
     { icon: <Vote className="w-4 h-4" />, label: "Funding", active: activePage === "governance", href: "/governance", hasSubmenu: false, onComingSoon: undefined },
-    { icon: <ShoppingCart className="w-4 h-4" />, label: "Marketplace", active: activePage === "marketplace", href: "/marketplace", hasSubmenu: false, onComingSoon: undefined },
-    { icon: <Coins className="w-4 h-4" />, label: "Staking", active: activePage === "staking", href: "/staking", hasSubmenu: false, onComingSoon: undefined },
+    ...(isAuthenticated && user?.role === "spv" ? [
+      { icon: <FileText className="w-4 h-4" />, label: "SPV Dashboard", active: activePage === "spv", href: "/spv", hasSubmenu: false, onComingSoon: undefined }
+    ] : []),
   ];
 
   return (
@@ -143,6 +150,36 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
           {/* Desktop Actions - Full buttons on desktop, icon-only on tablet */}
           {!isMobile && (
             <>
+              {!isAuthenticated ? (
+                <Button 
+                  variant="ghost" 
+                  size={isTablet ? "icon" : "default"}
+                  className={cn(
+                    "gap-2",
+                    isTablet ? "h-9 w-9" : "hidden lg:flex"
+                  )}
+                  asChild
+                >
+                  <Link to="/login">
+                    {isDesktop && <span>Sign In</span>}
+                    {isTablet && <span className="sr-only">Sign In</span>}
+                  </Link>
+                </Button>
+              ) : (
+                <Button 
+                  variant="ghost" 
+                  size={isTablet ? "icon" : "default"}
+                  className={cn(
+                    "gap-2",
+                    isTablet ? "h-9 w-9" : "hidden lg:flex"
+                  )}
+                  onClick={handleLogout}
+                >
+                  <LogOut className="w-5 h-5" />
+                  {isDesktop && <span>Logout</span>}
+                  {isTablet && <span className="sr-only">Logout</span>}
+                </Button>
+              )}
               <Button 
                 variant="outline" 
                 size={isTablet ? "icon" : "default"}
@@ -157,19 +194,21 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
                   {isDesktop && <span>Connect Wallet</span>}
                 </Link>
               </Button>
-              <Button 
-                size={isTablet ? "icon" : "default"}
-                className={cn(
-                  "gap-2 bg-primary text-primary-foreground hover:bg-primary/90",
-                  isTablet ? "h-9 w-9" : "hidden lg:flex"
-                )}
-                asChild
-              >
-                <Link to="/vault/tokenize">
-                  <Plus className="w-5 h-5" />
-                  {isDesktop && <span>New Vault</span>}
-                </Link>
-              </Button>
+              {isAuthenticated && (
+                <Button 
+                  size={isTablet ? "icon" : "default"}
+                  className={cn(
+                    "gap-2 bg-primary text-primary-foreground hover:bg-primary/90",
+                    isTablet ? "h-9 w-9" : "hidden lg:flex"
+                  )}
+                  asChild
+                >
+                  <Link to="/vault/tokenize">
+                    <Plus className="w-5 h-5" />
+                    {isDesktop && <span>New Vault</span>}
+                  </Link>
+                </Button>
+              )}
             </>
           )}
 
@@ -186,14 +225,14 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
             </Link>
           </Button>
 
-          {/* User Avatar - Show on tablet and desktop */}
-          {!isMobile && (
+          {/* User Avatar - Show on tablet and desktop when authenticated */}
+          {!isMobile && isAuthenticated && (
             <div className="hidden sm:flex items-center gap-2 pl-2 md:pl-3 border-l border-border flex-shrink-0">
               <Link to="/profile" className="cursor-pointer">
                 <Avatar className="w-7 h-7 md:w-8 md:h-8 hover:opacity-80 transition-opacity">
-                  <AvatarImage src="" alt="User" />
+                  <AvatarImage src="" alt={user?.email || "User"} />
                   <AvatarFallback className="bg-gradient-to-br from-rose-400 to-rose-600 text-primary-foreground text-xs font-medium">
-                    GF
+                    {user?.email?.charAt(0).toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
               </Link>
@@ -267,62 +306,74 @@ export const Navbar = ({ activePage = "overview" }: NavbarProps) => {
 
                   {/* Actions */}
                   <div className="flex flex-col gap-2 mt-4 pt-4 border-t">
+                    {!isAuthenticated ? (
+                      <>
+                        <Button variant="ghost" className="w-full gap-2 justify-start" asChild>
+                          <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                            Sign In
+                          </Link>
+                        </Button>
+                        <Button variant="outline" className="w-full gap-2 justify-start" asChild>
+                          <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
+                            Sign Up
+                          </Link>
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button 
+                          variant="ghost" 
+                          className="w-full gap-2 justify-start text-destructive hover:text-destructive hover:bg-destructive/10" 
+                          onClick={handleLogout}
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Logout
+                        </Button>
+                        <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 justify-start" asChild>
+                          <Link to="/vault/tokenize" onClick={() => setMobileMenuOpen(false)}>
+                            <Plus className="w-4 h-4" />
+                            New Vault
+                          </Link>
+                        </Button>
+                      </>
+                    )}
                     <Button variant="outline" className="w-full gap-2 justify-start" asChild>
                       <Link to="/launchpad" onClick={() => setMobileMenuOpen(false)}>
                         <Wallet className="w-4 h-4" />
                         Connect Wallet
                       </Link>
                     </Button>
-                    <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 justify-start" asChild>
-                      <Link to="/vault/tokenize" onClick={() => setMobileMenuOpen(false)}>
-                        <Plus className="w-4 h-4" />
-                        New Vault
-                      </Link>
-                    </Button>
-                    <Button variant="outline" className="w-full gap-2 justify-start" asChild>
-                      <Link to="/notifications" onClick={() => setMobileMenuOpen(false)}>
-                        <Bell className="w-4 h-4" />
-                        Notifications
-                        <span className="ml-auto w-2 h-2 bg-destructive rounded-full" />
-                      </Link>
-                    </Button>
+                    {isAuthenticated && (
+                      <Button variant="outline" className="w-full gap-2 justify-start" asChild>
+                        <Link to="/notifications" onClick={() => setMobileMenuOpen(false)}>
+                          <Bell className="w-4 h-4" />
+                          Notifications
+                          <span className="ml-auto w-2 h-2 bg-destructive rounded-full" />
+                        </Link>
+                      </Button>
+                    )}
                   </div>
 
                   {/* User Profile */}
-                  <Link 
-                    to="/profile" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 mt-4 pt-4 border-t cursor-pointer hover:opacity-80 transition-opacity"
-                  >
-                    <Avatar className="w-10 h-10">
-                      <AvatarImage src="" alt="George Farm" />
-                      <AvatarFallback className="bg-gradient-to-br from-rose-400 to-rose-600 text-primary-foreground text-xs font-medium">
-                        GF
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="text-sm font-medium text-foreground">George Farm</div>
-                      <div className="text-xs text-muted-foreground">Patent Verified</div>
-                    </div>
-                  </Link>
+                  {isAuthenticated && (
+                    <Link 
+                      to="/profile" 
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 mt-4 pt-4 border-t cursor-pointer hover:opacity-80 transition-opacity"
+                    >
+                      <Avatar className="w-10 h-10">
+                        <AvatarImage src="" alt={user?.email || "User"} />
+                        <AvatarFallback className="bg-gradient-to-br from-rose-400 to-rose-600 text-primary-foreground text-xs font-medium">
+                          {user?.email?.charAt(0).toUpperCase() || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="text-sm font-medium text-foreground">{user?.email || "User"}</div>
+                        <div className="text-xs text-muted-foreground">Patent Verified</div>
+                      </div>
+                    </Link>
+                  )}
 
-                  {/* Theme Toggle */}
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                    <div className="flex items-center gap-3">
-                      {theme === "dark" ? (
-                        <Moon className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <Sun className="h-4 w-4 text-muted-foreground" />
-                      )}
-                      <span className="text-sm font-medium text-foreground">
-                        {theme === "dark" ? "Dark Mode" : "Light Mode"}
-                      </span>
-                    </div>
-                    <Switch
-                      checked={theme === "dark"}
-                      onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
-                    />
-                  </div>
                 </div>
               </SheetContent>
             </Sheet>

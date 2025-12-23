@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 
 const stats = [
   { value: "$45.M", label: "Ecosystem TVL" },
@@ -9,8 +10,14 @@ const stats = [
 ];
 
 export const HeroSection = () => {
+  const heroRef = useScrollAnimation({
+    from: { opacity: 0, y: 30 },
+    to: { opacity: 1, y: 0 },
+    start: "top 85%",
+  });
+
   return (
-    <div className="relative overflow-hidden rounded-2xl hero-gradient p-4 sm:p-6 md:p-8 text-primary-foreground min-h-fit">
+    <div ref={heroRef} className="relative overflow-hidden rounded-2xl hero-gradient p-4 sm:p-6 md:p-8 text-primary-foreground min-h-fit">
       {/* Abstract shapes */}
       <div className="absolute top-0 right-0 w-96 h-96 opacity-30">
         <div className="absolute top-10 right-10 w-64 h-64 rounded-full bg-gradient-to-br from-teal/40 to-transparent blur-3xl" />

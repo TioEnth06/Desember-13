@@ -1,7 +1,11 @@
 import { Calculator, Info, TrendingUp, Shield, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function LTVCalculator() {
   const [patentValue, setPatentValue] = useState("");
@@ -9,6 +13,34 @@ export function LTVCalculator() {
   const [riskScore, setRiskScore] = useState<number | null>(null);
   const [ltvRatio, setLtvRatio] = useState<number | null>(null);
   const [maxLoanAmount, setMaxLoanAmount] = useState<string>("");
+  const calculatorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const calculator = calculatorRef.current;
+    if (!calculator) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        calculator,
+        { opacity: 0, x: -30 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: calculator,
+            start: "top 80%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
 
   useEffect(() => {
     if (patentValue) {
@@ -61,7 +93,7 @@ export function LTVCalculator() {
   };
 
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-sm animate-fade-in h-auto lg:sticky lg:top-20 lg:z-10">
+    <div ref={calculatorRef} className="rounded-xl border border-border bg-card p-6 shadow-sm h-auto lg:sticky lg:top-20 lg:z-10">
       <div className="mb-4 flex items-center gap-2">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
           <Calculator className="h-4 w-4 text-primary" />

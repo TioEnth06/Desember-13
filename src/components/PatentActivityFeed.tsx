@@ -1,6 +1,7 @@
 import { Search, SlidersHorizontal, ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDevice } from "@/hooks/use-device";
+import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 
 const patents = [
   {
@@ -35,9 +36,14 @@ const patents = [
 export const PatentActivityFeed = () => {
   const { width } = useDevice();
   const isSmallScreen = width <= 440;
+  const feedRef = useScrollAnimation({
+    from: { opacity: 0, y: 30 },
+    to: { opacity: 1, y: 0 },
+    start: "top 80%",
+  });
   
   return (
-    <div className="stat-card">
+    <div ref={feedRef} className="stat-card">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="font-semibold text-foreground">Patent Activity Feed</h3>
@@ -67,8 +73,7 @@ export const PatentActivityFeed = () => {
         {patents.map((patent, index) => (
           <div
             key={index}
-            className="p-4 rounded-xl bg-muted/50 hover:bg-muted transition-colors animate-fade-in"
-            style={{ animationDelay: `${index * 100}ms` }}
+            className="p-4 rounded-xl bg-muted/50 hover:bg-muted transition-colors"
           >
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-bold text-foreground">

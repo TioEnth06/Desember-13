@@ -74,11 +74,11 @@ export const websiteSchema = z
 
 // Combined validation schemas for form sections
 export const inventorSchema = z.object({
-  fullName: z.string().min(1, "Full name or organization name is required"),
-  role: z.string().min(1, "Role is required"),
+  fullName: z.string().min(1, "Full name / Organization Name is required"),
+  role: z.string().min(1, "Role is required. Please select a role."),
   email: emailSchema,
   phone: phoneSchema,
-  country: z.string().min(1, "Country is required"),
+  country: z.string().min(1, "Country of Origin is required. Please select a country."),
   website: websiteSchema,
 });
 
@@ -174,12 +174,14 @@ export type TermsFormData = z.infer<typeof termsSchema>;
 
 // Patent Vault Form validation schemas
 export const patentDetailsSchema = z.object({
-  patentTitle: z.string().min(1, "Patent title is required"),
-  category: z.string().min(1, "Patent category is required"),
-  registrationNumber: z.string().min(1, "Patent registration number is required"),
-  filingDate: z.string().min(1, "Filing date is required"),
-  jurisdiction: z.string().min(1, "Jurisdiction is required"),
-  abstract: z.string().min(10, "Patent abstract must be at least 10 characters").max(1000, "Patent abstract must not exceed 1000 characters"),
+  patentTitle: z.string().min(1, "Patent Title is required"),
+  category: z.string().min(1, "Patent Category is required. Please select a category."),
+  registrationNumber: z.string().min(1, "Patent Registration Number is required"),
+  filingDate: z.string().min(1, "Filing Date is required. Please select a date."),
+  jurisdiction: z.string().min(1, "Jurisdiction is required. Please select a jurisdiction."),
+  abstract: z.string()
+    .min(10, "Patent Abstract must be at least 10 characters")
+    .max(1000, "Patent Abstract must not exceed 1000 characters"),
   keywords: z.string().min(1, "Keywords are required"),
 });
 
@@ -187,49 +189,185 @@ export type PatentDetailsFormData = z.infer<typeof patentDetailsSchema>;
 
 export const documentationSchema = z.object({
   patentDescription: z.any().refine((val) => val !== null && val !== undefined, {
-    message: "Patent Description is required"
+    message: "Patent Description file is required. Please upload a file."
   }),
   technicalSpecification: z.any().refine((val) => val !== null && val !== undefined, {
-    message: "Technical Specification Document is required"
+    message: "Technical Specification Document is required. Please upload a file."
   }),
-  trlLevel: z.string().min(1, "TRL Level is required"),
+  trlLevel: z.string().min(1, "TRL (Technology Readiness Level) is required. Please select a TRL level."),
 });
 
 export type DocumentationFormData = z.infer<typeof documentationSchema>;
 
 export const commercialValueSchema = z.object({
-  commercializationStage: z.string().min(1, "Commercialization stage is required"),
-  targetIndustry: z.string().min(1, "Target industry is required"),
-  marketSize: z.string().min(1, "Market size is required"),
-  competitiveAdvantage: z.string().min(10, "Competitive advantage must be at least 10 characters"),
+  commercializationStage: z.string().min(1, "Current Stage of Commercialization is required. Please select a stage."),
+  targetIndustry: z.string().min(1, "Target Industry is required. Please select an industry."),
+  marketSize: z.string().min(1, "Market Size is required"),
+  competitiveAdvantage: z.string().min(10, "Competitive Advantage must be at least 10 characters"),
 });
 
 export type CommercialValueFormData = z.infer<typeof commercialValueSchema>;
 
 export const ownershipSchema = z.object({
-  ownershipPercentage: z.string().min(1, "Ownership percentage is required"),
+  proofOfOwnership: z.any().refine((val) => val !== null && val !== undefined, {
+    message: "Proof of Patent Ownership (PDF) is required. Please upload a file."
+  }),
+  ownershipPercentage: z.string()
+    .min(1, "Your Percentage Ownership is required")
+    .refine((val) => {
+      const num = parseFloat(val);
+      return !isNaN(num) && num > 0 && num <= 100;
+    }, {
+      message: "Your Percentage Ownership must be between 1 and 100"
+    }),
   coOwners: z.array(z.object({
     name: z.string().min(1, "Co-owner name is required"),
-    percentage: z.string().min(1, "Percentage is required"),
-  })).optional(),
+    percentage: z.string().min(1, "Co-owner percentage is required"),
+  })).optional().default([]),
 });
 
 export type OwnershipFormData = z.infer<typeof ownershipSchema>;
 
 export const valuationSchema = z.object({
-  proposedValuation: z.string().min(1, "Proposed valuation is required"),
-  valuationBasis: z.string().min(1, "Valuation basis is required"),
-  valuationMethodology: z.string().min(10, "Valuation methodology must be at least 10 characters"),
+  proposedValuation: z.string()
+    .min(1, "Proposed Valuation (USD) is required")
+    .refine((val) => {
+      const num = parseFloat(val.replace(/[^0-9.]/g, ''));
+      return !isNaN(num) && num > 0;
+    }, {
+      message: "Proposed Valuation must be a valid positive number"
+    }),
+  valuationBasis: z.string().min(1, "Valuation Basis is required. Please select a valuation method."),
+  valuationMethodology: z.string().min(10, "Valuation Justification must be at least 10 characters"),
 });
 
 export type ValuationFormData = z.infer<typeof valuationSchema>;
 
 export const nftMintingSchema = z.object({
-  tokenName: z.string().min(1, "Token name is required"),
-  tokenSymbol: z.string().min(1, "Token symbol is required").max(10, "Token symbol must not exceed 10 characters"),
+  tokenName: z.string().min(1, "IP-NFT Name is required"),
+  tokenSymbol: z.string()
+    .min(1, "IP-NFT Symbol is required")
+    .max(10, "IP-NFT Symbol must not exceed 10 characters")
+    .refine((val) => /^[A-Z0-9]+$/.test(val.toUpperCase()), {
+      message: "IP-NFT Symbol should contain only letters and numbers"
+    }),
+  metadataVisibility: z.string().min(1, "NFT Metadata Visibility is required. Please select a visibility option."),
   fractionalizationEnabled: z.boolean(),
   totalSupply: z.string().optional(),
+  initialPrice: z.string().optional(),
 });
 
 export type NFTMintingFormData = z.infer<typeof nftMintingSchema>;
+
+// Funding Application Form validation schemas
+export const applicantInfoSchema = z.object({
+  walletAddress: z.string().min(1, "Wallet Address is required"),
+  fullName: z.string().min(1, "Full Name / Institution Name is required"),
+  email: emailSchema,
+  phone: phoneSchema,
+  applicantType: z.string().min(1, "Applicant Type is required. Please select an option."),
+});
+
+export type ApplicantInfoFormData = z.infer<typeof applicantInfoSchema>;
+
+export const ipNftInfoSchema = z.object({
+  ipNftId: z.string().min(1, "Please select an IP-NFT"),
+  inventionName: z.string().min(1, "Invention / Technology Name is required"),
+  patentNumber: z.string().min(1, "Patent Number / Registration Status is required"),
+  publicationYear: z.string().min(1, "Publication Year is required"),
+  ipType: z.string().min(1, "IP Type is required. Please select an option."),
+  technologyCategory: z.string().min(1, "Technology Category is required. Please select an option."),
+  otherCategory: z.string().optional(),
+});
+
+export type IPNftInfoFormData = z.infer<typeof ipNftInfoSchema>;
+
+export const projectOverviewSchema = z.object({
+  projectSummary: z.string()
+    .min(1, "Project Summary is required")
+    .refine((val) => {
+      const words = val.trim().split(/\s+/).filter(Boolean);
+      return words.length <= 150;
+    }, {
+      message: "Project Summary must not exceed 150 words"
+    }),
+  problemBeingSolved: z.string().min(10, "Problem Being Solved must be at least 10 characters"),
+  proposedSolution: z.string().min(10, "Proposed Solution / Technology must be at least 10 characters"),
+  uniqueValueProposition: z.string().min(10, "Unique Value Proposition (USP) must be at least 10 characters"),
+  trlLevel: z.string().min(1, "Technology Readiness Level (TRL) is required. Please select a level."),
+});
+
+export type ProjectOverviewFormData = z.infer<typeof projectOverviewSchema>;
+
+export const commercializationPlanSchema = z.object({
+  targetIndustry: z.string().min(1, "Target Industry is required"),
+  commercializationModel: z.string().min(1, "Commercialization / Licensing Model is required. Please select an option."),
+  timeToMarket: z.string().min(1, "Estimated Time to Market is required"),
+  commercializationCost: z.string().optional(),
+});
+
+export type CommercializationPlanFormData = z.infer<typeof commercializationPlanSchema>;
+
+export const fundingRequirementsSchema = z.object({
+  totalFunding: z.string()
+    .min(1, "Total Funding Requested (USDT) is required")
+    .refine((val) => {
+      const num = parseFloat(val.replace(/[^0-9.]/g, ''));
+      return !isNaN(num) && num > 0;
+    }, {
+      message: "Total Funding must be a valid positive number"
+    }),
+  rndAllocation: z.string().optional(),
+  prototypingAllocation: z.string().optional(),
+  legalAllocation: z.string().optional(),
+  marketTestingAllocation: z.string().optional(),
+  productionAllocation: z.string().optional(),
+  operationsAllocation: z.string().optional(),
+  utilizationTimeline: z.string().min(1, "Funding Utilization Timeline is required"),
+  hasCoInvestors: z.string().min(1, "Please specify if you have co-investors"),
+  commitmentLetter: z.any().optional(),
+});
+
+export type FundingRequirementsFormData = z.infer<typeof fundingRequirementsSchema>;
+
+export const teamExpertiseSchema = z.object({
+  applicantName: z.string().min(1, "Applicant / Person in Charge (PIC) is required"),
+  role: z.string().min(1, "Role / Position is required"),
+  background: z.string()
+    .min(1, "Short Background is required")
+    .refine((val) => {
+      const words = val.trim().split(/\s+/).filter(Boolean);
+      return words.length <= 100;
+    }, {
+      message: "Short Background must not exceed 100 words"
+    }),
+  cv: z.any().optional(),
+  supportingLinks: z.string().optional(),
+});
+
+export type TeamExpertiseFormData = z.infer<typeof teamExpertiseSchema>;
+
+export const supportingDocumentsSchema = z.object({
+  technicalDocument: z.any().refine((val) => val !== null && val !== undefined, {
+    message: "Technical Document (PDF) is required. Please upload a file."
+  }),
+  licensingDraft: z.any().optional(),
+  pitchVideo: z.any().optional(),
+});
+
+export type SupportingDocumentsFormData = z.infer<typeof supportingDocumentsSchema>;
+
+export const declarationsSchema = z.object({
+  acknowledgeEvaluation: z.boolean().refine(val => val === true, {
+    message: "You must acknowledge the ERB evaluation process"
+  }),
+  agreeToMonitoring: z.boolean().refine(val => val === true, {
+    message: "You must agree to milestone-based monitoring"
+  }),
+  consentToDataAccess: z.boolean().refine(val => val === true, {
+    message: "You must consent to limited data access for ERB reviewers"
+  }),
+});
+
+export type DeclarationsFormData = z.infer<typeof declarationsSchema>;
 

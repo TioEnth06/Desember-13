@@ -1,6 +1,11 @@
+import { useEffect, useRef } from "react";
 import { Shield, Clock, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface LendingPoolCardProps {
   name: string;
@@ -39,13 +44,43 @@ export function LendingPoolCard({
   className,
   animationDelay = 0,
 }: LendingPoolCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        card,
+        { opacity: 0, y: 30, scale: 0.95 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
   return (
     <div 
+      ref={cardRef}
       className={cn(
-        "rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:shadow-md animate-fade-in",
+        "rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:shadow-md",
         className
       )}
-      style={{ animationDelay: `${animationDelay}ms` }}
     >
       {/* Header */}
       <div className="mb-4 flex items-start justify-between">

@@ -1,8 +1,8 @@
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Check, Upload } from "lucide-react";
+import { Check, Upload } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loanRequestSchema, type LoanRequestFormData } from "@/lib/validation";
@@ -17,6 +17,7 @@ import {
 
 interface LoanRequestInfoSectionProps {
   onContinue: () => void;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
 const loanTypes = [
@@ -48,10 +49,11 @@ const loanPurposes = [
   "Expansion/Operational Funding"
 ];
 
-export function LoanRequestInfoSection({ onContinue }: LoanRequestInfoSectionProps) {
+export function LoanRequestInfoSection({ onContinue, onValidationChange }: LoanRequestInfoSectionProps) {
   const form = useForm<LoanRequestFormData>({
     resolver: zodResolver(loanRequestSchema),
     mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       requestedAmount: "",
       loanType: "",
@@ -62,14 +64,16 @@ export function LoanRequestInfoSection({ onContinue }: LoanRequestInfoSectionPro
     },
   });
 
-  const onSubmit = (data: LoanRequestFormData) => {
-    console.log("Loan request data:", data);
-    onContinue();
-  };
+  const { isValid } = form.formState;
+
+  // Report validation state to parent
+  React.useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form className="space-y-6">
         {/* Auto-saved Badge */}
         <div className="flex items-center gap-2">
           <span className="auto-saved-badge">
@@ -238,14 +242,6 @@ export function LoanRequestInfoSection({ onContinue }: LoanRequestInfoSectionPro
             </FormItem>
           )}
         />
-
-        {/* Continue Button */}
-        <div className="flex justify-end pt-4">
-          <Button type="submit" className="gap-2">
-            Continue
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </div>
       </form>
     </Form>
   );

@@ -1,7 +1,7 @@
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { borrowerSchema, type BorrowerFormData } from "@/lib/validation";
@@ -16,6 +16,9 @@ import {
 
 interface BorrowerInformationSectionProps {
   onContinue: () => void;
+  onValidationChange?: (isValid: boolean) => void;
+  initialData?: Partial<BorrowerFormData>;
+  onDataChange?: (data: BorrowerFormData) => void;
 }
 
 const countries = [
@@ -100,27 +103,51 @@ const roles = [
   "Company"
 ];
 
-export function BorrowerInformationSection({ onContinue }: BorrowerInformationSectionProps) {
+export function BorrowerInformationSection({ onContinue, onValidationChange, initialData, onDataChange }: BorrowerInformationSectionProps) {
   const form = useForm<BorrowerFormData>({
     resolver: zodResolver(borrowerSchema),
     mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
-      fullName: "",
-      role: "",
-      email: "",
-      phone: "",
-      country: "",
+      fullName: initialData?.fullName || "",
+      role: initialData?.role || "",
+      email: initialData?.email || "",
+      phone: initialData?.phone || "",
+      country: initialData?.country || "",
     },
   });
 
-  const onSubmit = (data: BorrowerFormData) => {
-    console.log("Borrower data:", data);
-    onContinue();
-  };
+  const { isValid } = form.formState;
+
+  // Update form when initialData changes
+  React.useEffect(() => {
+    if (initialData) {
+      form.reset({
+        fullName: initialData.fullName || "",
+        role: initialData.role || "",
+        email: initialData.email || "",
+        phone: initialData.phone || "",
+        country: initialData.country || "",
+      });
+    }
+  }, [initialData, form]);
+
+  // Report validation state to parent
+  React.useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
+
+  // Save form data on change
+  React.useEffect(() => {
+    const subscription = form.watch((data) => {
+      onDataChange?.(data as BorrowerFormData);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, onDataChange]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form className="space-y-6">
         {/* Auto-saved Badge */}
         <div className="flex items-center gap-2">
           <span className="auto-saved-badge">
@@ -237,14 +264,6 @@ export function BorrowerInformationSection({ onContinue }: BorrowerInformationSe
               </FormItem>
             )}
         />
-
-        {/* Continue Button */}
-        <div className="flex justify-end pt-4">
-          <Button type="submit" className="gap-2">
-            Continue
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </div>
       </form>
     </Form>
   );

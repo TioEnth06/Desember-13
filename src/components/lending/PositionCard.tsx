@@ -1,5 +1,10 @@
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface PositionCardProps {
   tokenIcon: string;
@@ -28,6 +33,35 @@ export function PositionCard({
   className,
   animationDelay = 0,
 }: PositionCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        card,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
   const getLtvColor = (ltv: number) => {
     if (ltv < 50) return "text-success";
     if (ltv < 70) return "text-warning";
@@ -42,11 +76,11 @@ export function PositionCard({
 
   return (
     <div 
+      ref={cardRef}
       className={cn(
-        "rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:shadow-md animate-fade-in",
+        "rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:shadow-md",
         className
       )}
-      style={{ animationDelay: `${animationDelay}ms` }}
     >
       <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-0">
         {/* Left: Token Info */}

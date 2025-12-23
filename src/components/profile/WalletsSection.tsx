@@ -1,12 +1,18 @@
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Copy, Download, CheckCircle2, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function WalletsSection() {
   const { toast } = useToast();
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleCopy = (address: string, label: string) => {
     navigator.clipboard.writeText(address);
@@ -18,8 +24,53 @@ export function WalletsSection() {
     setTimeout(() => setCopiedAddress(null), 2000);
   };
 
+  useEffect(() => {
+    const cards = Array.from(containerRef.current?.querySelectorAll('.bg-card') || []);
+    if (!cards.length) return;
+
+    const ctx = gsap.context(() => {
+      // Animate title
+      gsap.fromTo(
+        containerRef.current?.querySelector('h1'),
+        { opacity: 0, y: -20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+
+      // Stagger animate cards
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.15,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
   return (
-    <div className="space-y-6">
+    <div ref={containerRef} className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Wallet Management</h1>
         <p className="text-muted-foreground mt-1">Manage your connected wallets and addresses</p>

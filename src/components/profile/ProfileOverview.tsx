@@ -1,12 +1,72 @@
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Mail, Calendar, Clock } from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useAuth } from "@/contexts/AuthContext";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function ProfileOverview() {
+  const { user } = useAuth();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement[]>([]);
+  
+  // Get user email and derive display name
+  const userEmail = user?.email || "";
+  const displayName = userEmail ? userEmail.split("@")[0].replace(/\./g, " ").replace(/\b\w/g, l => l.toUpperCase()) : "User";
+  const avatarInitial = userEmail ? userEmail.charAt(0).toUpperCase() : "U";
+
+  useEffect(() => {
+    const cards = Array.from(containerRef.current?.querySelectorAll('.bg-card') || []);
+    if (!cards.length) return;
+
+    const ctx = gsap.context(() => {
+      // Animate title
+      gsap.fromTo(
+        containerRef.current?.querySelector('h1'),
+        { opacity: 0, y: -20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+
+      // Stagger animate cards
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.15,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
   return (
-    <div className="space-y-6">
+    <div ref={containerRef} className="space-y-6">
       {/* Page Title */}
       <div>
         <h1 className="text-2xl font-bold text-foreground">Profile Overview</h1>
@@ -17,16 +77,16 @@ export function ProfileOverview() {
       <div className="bg-card rounded-xl border border-border p-4 sm:p-6">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-6">
           <Avatar className="w-20 h-20 md:w-24 md:h-24">
-            <AvatarImage src="" alt="George Farm" />
+            <AvatarImage src="" alt={displayName} />
             <AvatarFallback className="bg-gradient-to-br from-rose-400 to-rose-600 text-primary-foreground text-2xl font-semibold">
-              GF
+              {avatarInitial}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <h2 className="text-2xl font-bold text-foreground mb-1">George Farm</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-1">{displayName}</h2>
             <div className="flex items-center gap-2 text-muted-foreground mb-3">
               <Mail className="w-4 h-4" />
-              <span>george.farm@nano.fi</span>
+              <span>{userEmail || "No email"}</span>
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <Badge variant="outline" className="gap-2">

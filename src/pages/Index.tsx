@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
 import { FeatureCards } from "@/components/FeatureCards";
@@ -7,6 +10,21 @@ import { YieldOverview } from "@/components/YieldOverview";
 import { Footer } from "@/components/Footer";
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
+
+  // Redirect SPV users to their dashboard
+  useEffect(() => {
+    if (isAuthenticated && user?.role === "spv") {
+      navigate("/spv", { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
+
+  // Don't render if redirecting
+  if (isAuthenticated && user?.role === "spv") {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar activePage="overview" />

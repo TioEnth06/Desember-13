@@ -1,5 +1,10 @@
+import { useEffect, useRef } from "react";
 import { Shield, BarChart3, Sliders, Bell, AlertTriangle, AlertOctagon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface Feature {
   icon: React.ElementType;
@@ -60,8 +65,37 @@ const colorStyles = {
 };
 
 export function FeaturesSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        container,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: container,
+            start: "top 80%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
   return (
-    <div className="grid gap-6 lg:grid-cols-2 animate-fade-in" style={{ animationDelay: '400ms' }}>
+    <div ref={containerRef} className="grid gap-6 lg:grid-cols-2">
       {/* Why Choose NanoFi */}
       <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
         <div className="mb-4 flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-2">

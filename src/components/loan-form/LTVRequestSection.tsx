@@ -1,7 +1,7 @@
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Check, Info } from "lucide-react";
+import { Check, Info } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ltvRequestSchema, type LTVRequestFormData } from "@/lib/validation";
@@ -16,12 +16,14 @@ import {
 
 interface LTVRequestSectionProps {
   onContinue: () => void;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
-export function LTVRequestSection({ onContinue }: LTVRequestSectionProps) {
+export function LTVRequestSection({ onContinue, onValidationChange }: LTVRequestSectionProps) {
   const form = useForm<LTVRequestFormData>({
     resolver: zodResolver(ltvRequestSchema),
     mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       preferredLTV: "",
       ltvRiskInfo: "",
@@ -30,18 +32,16 @@ export function LTVRequestSection({ onContinue }: LTVRequestSectionProps) {
     },
   });
 
-  const preferredLTV = parseFloat(form.watch("preferredLTV") || "0");
-  const collateralValue = parseFloat(form.watch("collateralValue") || "0");
-  const calculatedMaxLoan = (collateralValue * preferredLTV) / 100;
+  const { isValid } = form.formState;
 
-  const onSubmit = (data: LTVRequestFormData) => {
-    console.log("LTV Request data:", data);
-    onContinue();
-  };
+  // Report validation state to parent
+  React.useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form className="space-y-6">
         {/* Auto-saved Badge */}
         <div className="flex items-center gap-2">
           <span className="auto-saved-badge">
@@ -139,11 +139,11 @@ export function LTVRequestSection({ onContinue }: LTVRequestSectionProps) {
         </div>
 
         {/* Info Box */}
-        <div className="rounded-lg border border-blue-500/30 bg-blue-50 dark:bg-blue-900/20 p-4 flex items-start gap-3">
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 flex items-start gap-3">
           <div className="flex-shrink-0 mt-0.5">
-            <Info className="w-5 h-5 text-blue-600 dark:text-blue-500" />
+            <Info className="w-5 h-5 text-blue-600" />
           </div>
-          <div className="text-sm text-blue-800 dark:text-blue-200">
+          <div className="text-sm text-blue-800">
             <p className="font-medium mb-1">LTV Risk Information:</p>
             <ul className="list-disc list-inside space-y-1 text-xs">
               <li>Higher LTV ratios (70%+) carry increased risk of liquidation</li>
@@ -151,14 +151,6 @@ export function LTVRequestSection({ onContinue }: LTVRequestSectionProps) {
               <li>Your collateral value determines the maximum loan amount</li>
             </ul>
           </div>
-        </div>
-
-        {/* Continue Button */}
-        <div className="flex justify-end pt-4">
-          <Button type="submit" className="gap-2">
-            Continue
-            <ArrowRight className="w-4 h-4" />
-          </Button>
         </div>
       </form>
     </Form>

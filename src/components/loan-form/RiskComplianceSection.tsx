@@ -1,8 +1,8 @@
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Check, Upload } from "lucide-react";
+import { Check, Upload } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { riskComplianceSchema, type RiskComplianceFormData } from "@/lib/validation";
@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 
 interface RiskComplianceSectionProps {
   onContinue: () => void;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
 const patentStatuses = [
@@ -27,10 +28,11 @@ const patentStatuses = [
   "Under Review"
 ];
 
-export function RiskComplianceSection({ onContinue }: RiskComplianceSectionProps) {
+export function RiskComplianceSection({ onContinue, onValidationChange }: RiskComplianceSectionProps) {
   const form = useForm<RiskComplianceFormData>({
     resolver: zodResolver(riskComplianceSchema),
     mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       existingObligations: "",
       coOwnership: "",
@@ -40,14 +42,16 @@ export function RiskComplianceSection({ onContinue }: RiskComplianceSectionProps
     },
   });
 
-  const onSubmit = (data: RiskComplianceFormData) => {
-    console.log("Risk & Compliance data:", data);
-    onContinue();
-  };
+  const { isValid } = form.formState;
+
+  // Report validation state to parent
+  React.useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form className="space-y-6">
         {/* Auto-saved Badge */}
         <div className="flex items-center gap-2">
           <span className="auto-saved-badge">
@@ -184,14 +188,6 @@ export function RiskComplianceSection({ onContinue }: RiskComplianceSectionProps
             </FormItem>
           )}
         />
-
-        {/* Continue Button */}
-        <div className="flex justify-end pt-4">
-          <Button type="submit" className="gap-2">
-            Continue
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </div>
       </form>
     </Form>
   );

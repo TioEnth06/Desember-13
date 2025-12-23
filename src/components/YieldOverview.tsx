@@ -1,4 +1,9 @@
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const metrics = [
   {
@@ -22,20 +27,66 @@ const metrics = [
 ];
 
 export const YieldOverview = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const itemsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const items = itemsRef.current?.children;
+    if (!items) return;
+
+    const ctx = gsap.context(() => {
+      // Animate container
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+            once: true,
+          },
+        }
+      );
+
+      // Stagger animate items
+      gsap.fromTo(
+        Array.from(items),
+        { opacity: 0, x: -20 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: itemsRef.current,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
   return (
-    <div className="stat-card">
+    <div ref={containerRef} className="stat-card">
       <h3 className="font-semibold text-foreground mb-1">Yield & APR Overview</h3>
       <p className="text-sm text-muted-foreground mb-6">
         Current rates and market performance metrics
       </p>
 
-      <div className="space-y-4">
+      <div ref={itemsRef} className="space-y-4">
         {metrics.map((metric, index) => (
           <div
             key={index}
-            className="animate-fade-in"
             style={{ 
-              animationDelay: `${index * 100}ms`,
               padding: '16px',
               border: '1px solid rgba(0, 0, 0, 0.1)',
               borderRadius: '8px',

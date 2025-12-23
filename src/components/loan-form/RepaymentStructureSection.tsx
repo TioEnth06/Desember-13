@@ -1,8 +1,8 @@
+import React from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { repaymentSchema, type RepaymentFormData } from "@/lib/validation";
@@ -17,6 +17,7 @@ import {
 
 interface RepaymentStructureSectionProps {
   onContinue: () => void;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
 const repaymentMethods = [
@@ -34,10 +35,11 @@ const repaymentSources = [
   "External R&D Funding"
 ];
 
-export function RepaymentStructureSection({ onContinue }: RepaymentStructureSectionProps) {
+export function RepaymentStructureSection({ onContinue, onValidationChange }: RepaymentStructureSectionProps) {
   const form = useForm<RepaymentFormData>({
     resolver: zodResolver(repaymentSchema),
     mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       repaymentMethod: "",
       repaymentSource: "",
@@ -45,14 +47,16 @@ export function RepaymentStructureSection({ onContinue }: RepaymentStructureSect
     },
   });
 
-  const onSubmit = (data: RepaymentFormData) => {
-    console.log("Repayment structure data:", data);
-    onContinue();
-  };
+  const { isValid } = form.formState;
+
+  // Report validation state to parent
+  React.useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form className="space-y-6">
         {/* Auto-saved Badge */}
         <div className="flex items-center gap-2">
           <span className="auto-saved-badge">
@@ -138,14 +142,6 @@ export function RepaymentStructureSection({ onContinue }: RepaymentStructureSect
             </FormItem>
           )}
         />
-
-        {/* Continue Button */}
-        <div className="flex justify-end pt-4">
-          <Button type="submit" className="gap-2">
-            Continue
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </div>
       </form>
     </Form>
   );

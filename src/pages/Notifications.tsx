@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -19,6 +19,10 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 type NotificationType = "info" | "success" | "warning" | "error";
 
@@ -194,13 +198,98 @@ const Notifications = () => {
     return true;
   });
 
+  const headerRef = useRef<HTMLDivElement>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const notificationsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Animate header
+      gsap.fromTo(
+        headerRef.current,
+        { opacity: 0, y: -20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: "top 90%",
+            once: true,
+          },
+        }
+      );
+
+      // Animate actions
+      gsap.fromTo(
+        actionsRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          delay: 0.1,
+          scrollTrigger: {
+            trigger: actionsRef.current,
+            start: "top 90%",
+            once: true,
+          },
+        }
+      );
+
+      // Animate tabs
+      gsap.fromTo(
+        tabsRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          delay: 0.2,
+          scrollTrigger: {
+            trigger: tabsRef.current,
+            start: "top 90%",
+            once: true,
+          },
+        }
+      );
+
+      // Animate notifications
+      const notificationCards = notificationsRef.current?.children;
+      if (notificationCards && notificationCards.length > 0) {
+        gsap.fromTo(
+          Array.from(notificationCards),
+          { opacity: 0, y: 30, scale: 0.95 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.5,
+            stagger: 0.1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: notificationsRef.current,
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
+      }
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, [filteredNotifications]);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar activePage="overview" />
       <main className="p-4 md:p-6">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="flex items-center gap-4 mb-6">
+          <div ref={headerRef} className="flex items-center gap-4 mb-6">
             <Button
               variant="ghost"
               size="icon"
@@ -218,7 +307,7 @@ const Notifications = () => {
           </div>
           
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4 mb-6">
+          <div ref={actionsRef} className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4 mb-6">
             {unreadCount > 0 && (
               <div className="flex items-center gap-3">
                 <Badge variant="secondary" className="gap-2">
@@ -239,8 +328,9 @@ const Notifications = () => {
           </div>
 
           {/* Tabs */}
-          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-            <TabsList className="grid w-full sm:w-auto grid-cols-3">
+          <div ref={tabsRef}>
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+              <TabsList className="grid w-full sm:w-auto grid-cols-3">
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="unread">
                 Unread {unreadCount > 0 && `(${unreadCount})`}
@@ -263,7 +353,7 @@ const Notifications = () => {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="space-y-3">
+                <div ref={notificationsRef} className="space-y-3">
                   {filteredNotifications.map((notification) => (
                     <Card
                       key={notification.id}
@@ -355,6 +445,7 @@ const Notifications = () => {
               )}
             </TabsContent>
           </Tabs>
+          </div>
 
           {/* Actions */}
           {filteredNotifications.length > 0 && (

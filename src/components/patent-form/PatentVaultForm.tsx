@@ -9,8 +9,10 @@ import { NFTMintingSection } from "./NFTMintingSection";
 import { SignSubmitSection } from "./SignSubmitSection";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { saveVaultApplication } from "@/lib/vaultStorage";
+import { useAuth } from "@/contexts/AuthContext";
 
 type SectionId = 
   | 'inventor' 
@@ -49,6 +51,7 @@ export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
   const [sectionValidation, setSectionValidation] = useState<Record<SectionId, boolean>>({});
   const [formData, setFormData] = useState<Record<SectionId, any>>({});
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const currentSection = sections[currentSectionIndex];
   const isFirstSection = currentSectionIndex === 0;
@@ -70,14 +73,14 @@ export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
   };
 
   const handleContinue = (currentSectionId: SectionId) => {
-    // Check if current section is valid
-    // Only block if validation is explicitly false
+    // Check if current section is valid - only proceed if explicitly true
     const validationState = sectionValidation[currentSectionId];
-    if (validationState === false) {
+    if (validationState !== true) {
       toast({
         title: "Please complete all required fields",
         description: "All required fields must be filled before proceeding.",
         variant: "destructive",
+        icon: <AlertCircle className="w-5 h-5" />,
       });
       return;
     }
@@ -110,14 +113,29 @@ export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
   };
 
   const handleSubmit = () => {
-    toast({
-      title: "Application Submitted",
-      description: "Your patent vault application has been submitted successfully. We'll review it within 3-5 business days.",
-    });
-    // Close dialog after a short delay
-    setTimeout(() => {
-      onClose?.();
-    }, 1500);
+    try {
+      // Save application to storage
+      const applicationId = saveVaultApplication({
+        submittedBy: user?.email || "unknown",
+        formData: formData,
+      });
+
+      toast({
+        title: "Application Submitted",
+        description: "Your patent vault application has been submitted successfully. SPV will review it within 3-5 business days.",
+      });
+      
+      // Close dialog after a short delay
+      setTimeout(() => {
+        onClose?.();
+      }, 1500);
+    } catch (error) {
+      toast({
+        title: "Submission Failed",
+        description: "There was an error submitting your application. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const renderSectionContent = (sectionId: SectionId) => {
@@ -169,14 +187,11 @@ export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
   };
 
   // Check if current section is valid
-  // For sections with forms (like inventor), use their reported validation state
-  // For sections without forms, they report as valid by default (can be enhanced later)
-  // Only disable if validation is explicitly false, otherwise allow navigation
-  // This allows users to navigate even if validation hasn't been set yet
+  // The button should only be enabled when validation is explicitly true
+  // Disabled if validation is false, undefined, or not yet set
   const validationState = sectionValidation[currentSection.id];
-  // Allow navigation if validation is not explicitly false
-  // This means undefined or true will allow navigation
-  const isCurrentSectionValid = validationState !== false;
+  // Only enable navigation if validation is explicitly true
+  const isCurrentSectionValid = validationState === true;
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -208,14 +223,11 @@ export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center transition-all flex-shrink-0 z-10 ${
                         isCurrent
-                          ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 animate-pulse scale-110 shadow-lg shadow-primary/50'
+                          ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 scale-110 shadow-lg shadow-primary/50'
                           : isCompleted || isPast
                           ? 'bg-success text-success-foreground'
                           : 'bg-muted text-muted-foreground'
                       }`}
-                      style={isCurrent ? {
-                        animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite, scale 0.3s ease-out'
-                      } : {}}
                     >
                       {isCompleted || isPast ? (
                         <CheckCircle2 className="w-5 h-5" />
@@ -235,7 +247,7 @@ export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
                   <span
                     className={`text-xs text-center max-w-[80px] transition-all ${
                       isCurrent 
-                        ? 'font-semibold text-foreground animate-pulse' 
+                        ? 'font-semibold text-foreground' 
                         : 'text-muted-foreground'
                     }`}
                   >
@@ -257,7 +269,7 @@ export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
       </div>
 
       {/* Current Section Content */}
-      <div className="bg-card rounded-lg border-2 border-primary/20 p-6 shadow-card mb-6 animate-in fade-in-50 slide-in-from-bottom-4 duration-500">
+      <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm mb-6">
         {renderSectionContent(currentSection.id)}
       </div>
 
@@ -280,8 +292,8 @@ export function PatentVaultForm({ onClose }: PatentVaultFormProps) {
           <Button
             onClick={() => handleContinue(currentSection.id)}
             className="gap-2"
-            disabled={false}
-            title="Click to continue to next step"
+            disabled={!isCurrentSectionValid}
+            title={isCurrentSectionValid ? "Click to continue to next step" : "Please complete all required fields before proceeding"}
           >
             Next
             <ArrowRight className="w-4 h-4" />

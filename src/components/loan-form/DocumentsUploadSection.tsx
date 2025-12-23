@@ -1,9 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Check, Upload, FileText } from "lucide-react";
+import React, { useState, useRef } from "react";
+import { Check, Upload, FileText } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { documentsSchema, type DocumentsFormData } from "@/lib/validation";
-import { useState, useRef } from "react";
 import {
   Form,
   FormControl,
@@ -15,12 +14,14 @@ import {
 
 interface DocumentsUploadSectionProps {
   onContinue: () => void;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
-export function DocumentsUploadSection({ onContinue }: DocumentsUploadSectionProps) {
+export function DocumentsUploadSection({ onContinue, onValidationChange }: DocumentsUploadSectionProps) {
   const form = useForm<DocumentsFormData>({
     resolver: zodResolver(documentsSchema),
     mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       patentCertificate: null,
       valuationDocument: null,
@@ -30,10 +31,12 @@ export function DocumentsUploadSection({ onContinue }: DocumentsUploadSectionPro
     },
   });
 
-  const onSubmit = (data: DocumentsFormData) => {
-    console.log("Documents data:", data);
-    onContinue();
-  };
+  const { isValid } = form.formState;
+
+  // Report validation state to parent
+  React.useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
 
   const FileUploadField = ({ 
     name, 
@@ -129,7 +132,7 @@ export function DocumentsUploadSection({ onContinue }: DocumentsUploadSectionPro
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form className="space-y-6">
         {/* Auto-saved Badge */}
         <div className="flex items-center gap-2">
           <span className="auto-saved-badge">
@@ -172,14 +175,6 @@ export function DocumentsUploadSection({ onContinue }: DocumentsUploadSectionPro
           label="Company Registration/KYC" 
           required
         />
-
-        {/* Continue Button */}
-        <div className="flex justify-end pt-4">
-          <Button type="submit" className="gap-2">
-            Continue
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </div>
       </form>
     </Form>
   );

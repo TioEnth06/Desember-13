@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import CategoriesSidebar from "./CategoriesSidebar";
 import PatentCard from "./PatentCard";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const PatentsSection = () => {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -71,8 +75,57 @@ const PatentsSection = () => {
     ? patents 
     : patents.filter(patent => patent.category === activeCategory);
 
+  const sectionRef = useRef<HTMLElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const cards = cardsRef.current?.children;
+    if (!cards) return;
+
+    const ctx = gsap.context(() => {
+      // Animate section
+      gsap.fromTo(
+        sectionRef.current,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+            once: true,
+          },
+        }
+      );
+
+      // Stagger animate cards
+      gsap.fromTo(
+        Array.from(cards),
+        { opacity: 0, y: 30, scale: 0.95 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: cardsRef.current,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, [filteredPatents]);
+
   return (
-    <section className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
+    <section ref={sectionRef}>
       <div className="flex gap-6">
         <CategoriesSidebar
           categories={categories}
@@ -80,7 +133,7 @@ const PatentsSection = () => {
           onCategoryChange={setActiveCategory}
         />
 
-        <div className="flex-1 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={cardsRef} className="flex-1 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredPatents.map((patent, index) => (
             <PatentCard key={index} {...patent} />
           ))}

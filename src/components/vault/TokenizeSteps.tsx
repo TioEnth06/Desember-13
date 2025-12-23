@@ -1,6 +1,10 @@
 import { FileUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const steps = [
   { number: 1, title: "Step-01", description: "Upload your patent documentation and supporting materials" },
@@ -12,18 +16,45 @@ const steps = [
 
 export const TokenizeSteps = () => {
   const [visibleSteps, setVisibleSteps] = useState<number[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Animate steps appearing one by one
-    steps.forEach((_, index) => {
-      setTimeout(() => {
-        setVisibleSteps((prev) => [...prev, index]);
-      }, index * 200);
+    const container = containerRef.current;
+    if (!container) return;
+
+    const ctx = gsap.context(() => {
+      // Animate container
+      gsap.fromTo(
+        container,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          scrollTrigger: {
+            trigger: container,
+            start: "top 80%",
+            once: true,
+            onEnter: () => {
+              // Trigger step animations when container enters viewport
+              steps.forEach((_, index) => {
+                setTimeout(() => {
+                  setVisibleSteps((prev) => [...prev, index]);
+                }, index * 200);
+              });
+            },
+          },
+        }
+      );
     });
+
+    return () => {
+      ctx.revert();
+    };
   }, []);
 
   return (
-    <div className="relative rounded-2xl overflow-hidden">
+    <div ref={containerRef} className="relative rounded-2xl overflow-hidden">
       {/* Background image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"

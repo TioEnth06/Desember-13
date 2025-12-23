@@ -1,6 +1,10 @@
 import { Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const proposals = [
   { id: 1, name: "Carbon Nanofilter", type: "Biotech", prop: "PROP-45", forVotes: 3289, against: 439, apy: "30%", funded: 80 },
@@ -95,9 +99,56 @@ const CircularProgress = ({ value }: { value: number }) => {
 
 export const VotingWindow = () => {
   const countdown = useCountdown(5, 12, 36);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const cards = cardsRef.current?.children;
+    if (!cards) return;
+
+    const ctx = gsap.context(() => {
+      // Animate container
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+            once: true,
+          },
+        }
+      );
+
+      // Stagger animate cards
+      gsap.fromTo(
+        Array.from(cards),
+        { opacity: 0, scale: 0.9 },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: cardsRef.current,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
 
   return (
-    <div className="stat-card">
+    <div ref={containerRef} className="stat-card">
       <div className="flex items-center justify-between mb-1">
         <p className="text-xs text-muted-foreground">Top Governance Proposal</p>
         <Button variant="ghost" className="text-accent gap-1 text-sm h-auto p-0">
@@ -110,12 +161,11 @@ export const VotingWindow = () => {
         Total Vault Value <span className="font-semibold text-success">$6.2M</span>
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {proposals.map((proposal, index) => (
           <div
             key={proposal.id}
-            className="vote-card animate-fade-in w-full"
-            style={{ animationDelay: `${index * 50}ms` }}
+            className="vote-card w-full"
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-1 text-xs text-muted-foreground">

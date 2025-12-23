@@ -1,8 +1,15 @@
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Eye, HandCoins, ShoppingCart } from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function MyIPNFTsSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
   const ipNFTs = [
     {
       id: "#00123",
@@ -27,14 +34,60 @@ export function MyIPNFTsSection() {
     },
   ];
 
+  useEffect(() => {
+    const cards = cardsRef.current?.children;
+    if (!cards) return;
+
+    const ctx = gsap.context(() => {
+      // Animate title
+      gsap.fromTo(
+        containerRef.current?.querySelector('h1'),
+        { opacity: 0, y: -20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+
+      // Stagger animate cards
+      gsap.fromTo(
+        Array.from(cards),
+        { opacity: 0, y: 30, scale: 0.95 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: cardsRef.current,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
   return (
-    <div className="space-y-6">
+    <div ref={containerRef} className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">My IP-NFTs</h1>
         <p className="text-muted-foreground mt-1">Manage your tokenized intellectual property</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
+      <div ref={cardsRef} className="grid grid-cols-1 gap-4">
         {ipNFTs.map((nft) => (
           <div key={nft.id} className="bg-card rounded-xl border border-border p-4 sm:p-6">
             <div className="flex flex-col gap-4">

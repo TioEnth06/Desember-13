@@ -292,11 +292,11 @@ export function InventorSection({ onContinue, onValidationChange, initialData, o
         />
 
         {/* Privacy Note */}
-        <div className="rounded-lg border border-blue-500/30 bg-blue-50 dark:bg-blue-900/20 p-6 flex items-center gap-3 min-h-[80px]">
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-6 flex items-center gap-3 min-h-[80px]">
           <div className="flex-shrink-0 mt-0.5">
-            <Info className="w-5 h-5 text-blue-600 dark:text-blue-500" />
+            <Info className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-sm text-blue-800 dark:text-blue-200">
+          <p className="text-sm text-blue-800">
             <span className="font-medium">Privacy Note:</span> Your contact information will be kept confidential and only used for verification purposes.
           </p>
         </div>
